@@ -1,0 +1,52 @@
+<!doctype html>
+<title>Stick figures on Canvas</title>
+<style>
+  /* the canvas is normally invisible so we give it a border */
+  canvas { border: 2px dashed green; display: block; margin: 1em; }
+</style>
+<script src="js/drawing.js"></script>
+<script src="js/stickFigure.js"></script>
+
+<!--
+     in this file, the stick figure gains the ability to move its limbs
+  -->
+
+<h1>Stick figures on Canvas: walking</h1>
+
+<a href="sticks2.html">previous</a> | <a href="/">index</a> | <a href="sticks4.html">next</a>
+
+<canvas id="canvas" width="800" height="400"></canvas>
+
+<script>
+  // this will make the JavaScript engine much pickier about potential programming issues
+  'use strict';
+
+  // get the "drawing context" - the object that can actually draw on the canvas
+  var c = document.getElementById("canvas").getContext("2d");
+
+  // set our drawing style
+  c.lineWidth = 3;
+  c.lineCap = "round";
+  c.lineJoin = "round"
+  c.strokeStyle = "#000";
+
+  // the stick figure will walk on a horizontal path from x=100 to x=700
+  var pathStart = 100;
+  var pathLength = 600;
+
+  for (var x=0; x<= pathLength; x+=85) { // 85 is a comfortable distance between stick figures walking in a line
+    // notice the last two parameters:
+    // 0 is the angle the stick figure is facing (reminder: 0 means to the right)
+    // x is the distance traveled so the stick figure's limbs can be shown mid-stride
+    drawStickFigure(c, x+pathStart, 350, 0, x);
+  }
+
+  // show that a stationary stick figure still has normal limbs
+  // and that a stick figure without the `facing` angle faces directly towards us (90 is the default value)
+  drawStickFigure(c, 200, 180)
+  drawStickFigure(c, 100, 200, 45)
+  drawStickFigure(c, 300, 200, 135)
+
+
+  // the stick figure functions are now in stickFigure.js because they are reused in subsequent files
+</script>

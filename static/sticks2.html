@@ -1,0 +1,95 @@
+<!doctype html>
+<title>Stick figures on Canvas</title>
+<style>
+  /* the canvas is normally invisible so we give it a border */
+  canvas { border: 2px dashed green; display: block; margin: 1em; }
+</style>
+<script src="js/drawing.js"></script>
+
+<!--
+     in this file, we make the stick figures' faces turn where we want
+  -->
+
+<h1>Stick figures on Canvas: turning around</h1>
+
+<a href="sticks1.html">previous</a> | <a href="/">index</a> | <a href="sticks3.html">next</a>
+
+<canvas id="canvas" width="800" height="500"></canvas>
+
+<script>
+  // this will make the JavaScript engine much pickier about potential programming issues
+  'use strict';
+
+  // get the "drawing context" - the object that can actually draw on the canvas
+  var c = document.getElementById("canvas").getContext("2d");
+
+  // set our drawing style
+  c.lineWidth = 3;
+  c.lineCap = "round";
+  c.lineJoin = "round"
+  c.strokeStyle = "#000";
+
+  // draw a circle of stick figures, facing inwards
+  for (var angle=0; angle<360; angle+=30) {
+    // it will actually be an ellipse, with center at 400,300; horizontal radius of 300, and vertial radius of 150
+    var x = 400 + 300*Math.cos(rad(angle))
+    var y = 300 + 150*Math.sin(rad(angle))
+
+    // notice the last parameter: the angle is from the centre out, so 180+angle is back towards the centre
+    drawStickFigure(c, x, y, 180+angle);
+  }
+
+
+
+
+  // draws a stick figure on the canvas
+  // the stick figure will stand over the point X,Y
+  // facing is a degree in which the stick figure is facing: 0 is to the right, 90 is towards us
+  function drawStickFigure(c, x, y, facing) {
+    // because of the way the canvas works, it's best to draw lines at half-pixels
+    x+=.5
+    y+=.5
+
+    // the arms and the legs look the same
+    drawLimbs(c, x, y)            // legs
+    drawLimbs(c, x, y-40)         // arms
+
+    // body is just a line
+    line(c, x, y-40, x, y-80)     // body
+
+    // head is a circle with eyes and a smile
+    circle(c, x, y-100, 20)       // head
+    drawFace(c, x, y-100, facing) // face
+  }
+
+  function drawLimbs(c, x, y) {
+    line(c, x-20, y, x, y-40)
+    line(c, x+20, y, x, y-40)
+  }
+
+  function drawFace(c, x, y, facing) {
+    // if the `facing` parameter is not given, the stick figure will face towards us
+    if (facing === undefined) facing = 90;
+
+    // make sure the `facing` parameter is between 0 and 360
+    facing = facing % 360; // that's like the mathematical remainder after a division
+    if (facing < 0) facing += 360;
+
+    if (facing > 180) return;  // facing away from us, don't draw a face
+
+    // we'll fake the turning of the face by shifting the eyes and the smile by an offset of up to 10 pixels
+    var faceOffset = 0;
+    if (facing <= 180) {
+      faceOffset = (facing-90)/9;
+    }
+
+    circle(c, x-7-faceOffset, y-5, 1)  // 7 is distance from center, 5 is how high the eyes are from the head's center, 1 is eye size
+    circle(c, x+7-faceOffset, y-5, 1)
+
+    // decrease the smile size here
+    var smileSize = 70; // size of smile in degrees of angle; 360 would be a full circle
+    var startAngle = rad(90-smileSize/2-2*faceOffset)
+    var endAngle   = rad(90+smileSize/2-2*faceOffset)
+    arc(c, x-faceOffset, y, 12, startAngle, endAngle) // 12 is the radius of the smile circle
+  }
+</script>

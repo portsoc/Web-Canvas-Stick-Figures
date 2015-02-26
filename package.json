@@ -1,0 +1,14 @@
+{
+    "name": "WebF1-stick-figure-diamond-hunt",
+    "description": "a simple example drawing stick figures on an HTML5 canvas, and hunting diamonds with a simple server",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+      "express": "4.x",
+      "body-parser": "1.x.x"
+    },
+    "jshintConfig": {
+        "asi": true,
+        "multistr": true
+    }
+}

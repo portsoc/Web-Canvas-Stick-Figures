@@ -1,0 +1,61 @@
+<!doctype html>
+<title>Stick figures on Canvas</title>
+<style>
+  /* the canvas is normally invisible
+  so we give it a border */
+  canvas {
+    border: 2px dashed green;
+    display: block;
+    margin: 1em;
+  }
+</style>
+
+<!--
+     in this file, we have an HTML5 canvas,
+     on which we draw just a bit
+  -->
+
+<h1>Stick figures on Canvas</h1>
+
+<span style="color: #888">previous |</span> <a href="/">index</a> | <a href="sticks1.html">next</a>
+
+<canvas id="canvas" width="200" height="200">
+</canvas>
+
+
+
+<script>
+  // this will make the JavaScript engine much pickier about potential programming issues
+  'use strict';
+
+  // get the "drawing context" - the object that can actually draw on the canvas
+  var c = document.getElementById("canvas").getContext("2d")
+
+  // set our drawing style
+  c.lineWidth = 3
+  c.lineCap = "round"
+  c.lineJoin = "round"
+  c.strokeStyle = "red"
+
+  // uncomment the following code to draw on the canvas
+
+  // // draw a line almost across
+  // c.beginPath()
+  // c.moveTo(0,0)
+  // c.lineTo(150, 150)
+  // c.stroke()
+
+  // // draw a circle
+  // c.fillStyle="white"
+  // c.strokeStyle = "green"
+  // c.beginPath()
+  // // 6.3 is bigger than 2π so the arc will be a whole circle
+  // c.arc(100, 100, 30, 0, 6.3, false)
+  // c.fill()
+  // c.stroke()
+
+  // // this manipulates the Document Object Model (DOM)
+  // var newElement = document.createElement('h1')
+  // newElement.textContent = 'hello'
+  // document.body.appendChild(newElement)
+</script>

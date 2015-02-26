@@ -1,0 +1,129 @@
+<!doctype html>
+<title>Stick figures on Canvas</title>
+<style>
+  /* the canvas is normally invisible so we give it a border */
+  canvas { border: 2px dashed green; display: block; margin: 1em; }
+</style>
+<script src="js/drawing.js"></script>
+<script src="js/stickFigure.js"></script>
+
+<!--
+     in this file, we have the stick figure walking to our clicks
+  -->
+
+<h1>Stick figures on Canvas: walking to clicks</h1>
+
+<a href="sticks4.html">previous</a> | <a href="/">index</a> | <a href="sticks6.html">next</a>
+
+<canvas id="canvas" width="800" height="600"></canvas>
+
+<script>
+  // this will make the JavaScript engine much pickier about potential programming issues
+  'use strict';
+
+  // add a click event handler on the canvas so we can tell the stick figure where to go
+  var canvas = document.getElementById("canvas")
+  canvas.addEventListener('click', setNewTarget)
+
+  // get the "drawing context" - the object that can actually draw on the canvas
+  var c = canvas.getContext("2d");
+
+  // set our drawing style
+  c.lineWidth = 3;
+  c.lineCap = "round";
+  c.lineJoin = "round"
+  c.strokeStyle = "#000";
+
+  // this counts how much we have walked already
+  var distanceWalked = 0;
+
+  // the stick figure's current position on the canvas
+  var positionX = 100;
+  var positionY = 300;
+
+  // the coordinates where the user wants the stick figure to go
+  // initially it's where the stick figure is
+  var targetX = positionX;
+  var targetY = positionY;
+
+  // how many pixels the stick figure can walk per second
+  var speed = 50;
+
+  // how smooth should the animation be (24 frames per second is Hollywood standard)
+  var framesPerSecond = 24;
+
+  // draw the scene
+  updateAndDrawCurrentState()
+
+  // when we're animating, this variable holds the timer that calls us framesPerSecond times every second
+  var animationTimer =  null;
+
+  // when the user sets a new target, we can start animating
+  function startAnimation() {
+    if (animationTimer === null)
+      animationTimer = setInterval(updateAndDrawCurrentState, 1000/framesPerSecond)
+  }
+
+  // this function can be called to stop the animation (when the stick figure has reached the target)
+  function stopAnimating() {
+    if (animationTimer !== null) {
+      clearInterval(animationTimer)
+      animationTimer = null
+      stopTime()
+    }
+  }
+
+  function updateAndDrawCurrentState() {
+    // clear the canvas - we'll redraw everything
+    c.clearRect(0,0,c.canvas.width,c.canvas.height)
+
+    // draw target
+    line(c, targetX-10, targetY, targetX+10, targetY)
+    line(c, targetX, targetY-10, targetX, targetY+10)
+
+    // compute distance of stick figure from the target
+    var distance = Math.sqrt(Math.pow(targetX-positionX, 2) + Math.pow(targetY-positionY, 2))
+
+    if (distance<1) {
+      // we are at target, no need to walk any further
+      drawStickFigure(c, positionX, positionY)
+      // reset the stride so the stick figure can rest with legs comfortably spread
+      distanceWalked = 0
+      // when we're not moving, we need not wake up all the time and re-draw
+      stopAnimating()
+      return
+    }
+
+    // compute how far we have walked since the last time we've been in this function
+    var walkedNow = speed * elapsedTime()
+
+    if (walkedNow > distance) walkedNow = distance // don't walk past the target
+
+    // compute the angle towards the target
+    // note that direction here is in radians (full circle is 2π) and not in degrees as usual for us
+    var direction = Math.acos((targetX-positionX)/distance)
+    if ((targetY-positionY) < 0) direction = -direction;
+
+    // take the next step
+    positionX = positionX + Math.cos(direction) * walkedNow
+    positionY = positionY + Math.sin(direction) * walkedNow
+
+    // update the distance walked so the stride matches
+    distanceWalked += walkedNow
+
+    // this is our walking stick figure
+    // notice the conversion of the direction to degrees
+    drawStickFigure(c, positionX, positionY, deg(direction), distanceWalked);
+  }
+
+
+  // when the user clicks, we set the target to where the user clicked, and start walking there
+  function setNewTarget(event) {
+    var click = getClickCoordinates(event, canvas)
+    // 2 is the width of the border we've given our canvas
+    targetX = click.left-2
+    targetY = click.top-2
+    startAnimation()
+  }
+
+</script>
