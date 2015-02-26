@@ -9,5 +9,6 @@ module.exports = {
     port: process.env.PORT || 8080,
     canvasHeight: 500,
     canvasWidth: 700,
-    diamondColors: [ "#f00", "#0f0", "#08f"]
+    diamondColors: [ "#f00", "#0f0", "#08f"],
+    adminReferer: '*' /* for testing */
 }

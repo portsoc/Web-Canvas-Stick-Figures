@@ -50,6 +50,9 @@ app.get('/api/', function(req, res) { res.redirect('/api'); })
 app.get('/api/diamonds/',        listDiamonds)
 app.delete('/api/diamonds/:id',  claimDiamond)
 app.get('/api/scores/',          listLeaderBoard)
+app.get('/api/scores/reset',     resetLeaderBoard)
+app.get('/api/scores/stop',      stopCreatingDiamonds)
+app.get('/api/scores/start',     startCreatingDiamonds)
 
 /*
  *  setup redirects to URIs with slash at the end so that relative URIs work better
@@ -165,25 +168,46 @@ function claimDiamond(req, res, next) {
 }
 
 var creatingDiamonds = true;
-console.log("creating diamonds, press ENTER to stop");
+console.log("creating diamonds");
 
-var stdin = process.openStdin();
-stdin.on('data', function() {
-  creatingDiamonds = !creatingDiamonds;
-  if (creatingDiamonds) {
-    // reset - todo add periodic reset every minute or ten? remove stdin control?
-    leaderBoard = {}
-    diamonds = []
-  }
-  console.log((creatingDiamonds ? "started" : "STOPPED" ) + " creating diamonds")
+function resetLeaderBoard(req, res, next) {
+  if (!isAllowedReferer(req, config.adminReferer)) return res.status(403).send("forbidden")
+  creatingDiamonds = true;
+  leaderBoard = {}
+  diamonds = []
+  res.send("reset and creating diamonds")
   notifyClients()
-});
+}
+
+function stopCreatingDiamonds(req, res, next) {
+  if (!isAllowedReferer(req, config.adminReferer)) return res.status(403).send("forbidden")
+  creatingDiamonds = false;
+  res.send("stopped creating diamonds")
+}
+
+function startCreatingDiamonds(req, res, next) {
+  if (!isAllowedReferer(req, config.adminReferer)) return res.status(403).send("forbidden")
+  creatingDiamonds = true;
+  res.send("restarted creating diamonds")
+}
 
 var leaderBoard = {}
 
 function listLeaderBoard(req, res, next) {
-  res.send(leaderBoard);
+  if (isEmpty(leaderBoard)) {
+    res.send({none: { score: 0, name: "nobody is playing" }})
+  } else {
+    res.send(leaderBoard);
+  }
 }
+
+function isAllowedReferer(req, referers) {
+  if (referers == null) return false;
+  if (referers == "*") return true;
+  referers = [].concat(referers); // make sure referers is an array now
+  return referers.indexOf(req.headers.referer) >= 0
+}
+
 
 
 /*************************************************
@@ -194,4 +218,8 @@ function listLeaderBoard(req, res, next) {
 
 function notImplemented(req, res) {
     res.status(501).send("this functionality is envisioned but not implemented yet\n");
+}
+
+function isEmpty(object) {
+  return Object.getOwnPropertyNames(object).length === 0
 }
