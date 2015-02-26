@@ -175,6 +175,7 @@ function resetLeaderBoard(req, res, next) {
   creatingDiamonds = true;
   leaderBoard = {}
   diamonds = []
+  console.log("reset and creating diamonds")
   res.send("reset and creating diamonds")
   notifyClients()
 }
@@ -182,12 +183,14 @@ function resetLeaderBoard(req, res, next) {
 function stopCreatingDiamonds(req, res, next) {
   if (!isAllowedReferer(req, config.adminReferer)) return res.status(403).send("forbidden")
   creatingDiamonds = false;
+  console.log("stopped creating diamonds")
   res.send("stopped creating diamonds")
 }
 
 function startCreatingDiamonds(req, res, next) {
   if (!isAllowedReferer(req, config.adminReferer)) return res.status(403).send("forbidden")
   creatingDiamonds = true;
+  console.log("restarted creating diamonds")
   res.send("restarted creating diamonds")
 }
 
