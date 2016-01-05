@@ -163,7 +163,10 @@ function claimDiamond(req, res, next) {
     notifyClients()
     console.log("diamond claimed: " + diamonds.length + " (user: " + playerName + ")")
   } else {
-    res.status(404).send("diamond not found: " + diamondId)
+    // if the diamond existed, say it's gone, otherwise say it's unknown
+    var status  = diamondId < diamondNextId ? 410 : 404;
+    var message = diamondId < diamondNextId ? "diamond gone: " : "diamond not found: ";
+    res.status(status).send(message + diamondId)
   }
 }
 
