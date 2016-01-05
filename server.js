@@ -179,13 +179,13 @@ function claimDiamond(req, res, next) {
           // the speed is more than 2.5 times the normal speed of 50 pixels per second
           playerScore.banned = true;
           playerScore.name = playerScore.name + " (cheated, banned)";
+          console.log("user " + playerID + " banned for cheating (name: " + playerName + ")");
         }
       }
     }
 
     if (playerScore.banned) {
       res.status(403).send({msg: "don't cheat!", score: playerScore.score})
-      console.log("user " + playerID + " banned for cheating (name: " + playerName + ")");
       return;
     }
 
