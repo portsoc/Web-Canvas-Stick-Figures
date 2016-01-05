@@ -62,6 +62,11 @@
   // this is a stable ID by which the server identifies us in the scores
   // this allows us to set our name at any point without losing the score
   var playerID = "p" + positionX + "x" + positionY;
+  byId('playerName').value = playerID;
+
+  // this is a stable password that the server never publishes but remembers
+  // so nobody can use the same playerID and force banning
+  var playerPassword = Math.random();
 
   // the coordinates of targets clicked by the user
   var targets = []
@@ -281,7 +286,7 @@
   function claimDiamond(diamond) {
     var xhr = new XMLHttpRequest();
     xhr.onload = diamondClaimReturned;
-    xhr.open("delete", '/api/diamonds/' + diamond.id + '?user=' + playerID + '&name=' + byId('playerName').value, true);
+    xhr.open("delete", '/api/diamonds/' + diamond.id + '?user=' + playerID + '&pwd=' + playerPassword + '&name=' + byId('playerName').value, true);
     xhr.send();
     // on success, the server will update our score
   }

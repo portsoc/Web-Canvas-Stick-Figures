@@ -163,7 +163,14 @@ function claimDiamond(req, res, next) {
 
   if (found) {
     var playerID = req.query.user;
-    var playerScore = leaderBoard[playerID] || (leaderBoard[playerID] = { score: 0, x: claimedDiamond.x, y: claimedDiamond.y, t: Date.now() });
+    var playerPwd = req.query.pwd;
+    var playerScore = leaderBoard[playerID] || (leaderBoard[playerID] = { score: 0, x: claimedDiamond.x, y: claimedDiamond.y, t: Date.now(), p: playerPwd });
+    if (playerPwd !== playerScore.p) {
+      console.log("wrong password for player " + playerID);
+      res.status(401).send({msg: "wrong player password"})
+      return;
+    }
+
     var playerName = req.query.name || playerID;
 
     // check that the player could be where the diamond is
