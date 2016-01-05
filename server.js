@@ -68,6 +68,8 @@ function redirectToSlash(req, res) { res.redirect(req.url + '/'); }
 app.listen(config.port)
 console.log("server started on port " + config.port)
 
+console.log("creating diamonds");
+setInterval(addDiamond, 1000)
 
 
 /*************************************************
@@ -86,6 +88,12 @@ var waiting = []
  */
 var diamonds = []
 var diamondNextId = 1;
+
+/*
+ *  status information
+ */
+var creatingDiamonds = true;
+var leaderBoard = {}
 
 /*
  *  list diamonds
@@ -108,7 +116,6 @@ function listDiamonds(req, res, next) {
   waiting.push(res)
 }
 
-setInterval(addDiamond, 1000)
 
 
 // this function is also responsible for responding to listDiamonds requests
@@ -160,7 +167,7 @@ function claimDiamond(req, res, next) {
     playerScore.name = playerName
 
     res.status(200).send({msg: "diamond " + diamondId + " is yours!", score: playerScore.score})
-    notifyClients()
+    // notifyClients()
     console.log("diamond claimed: " + diamonds.length + " (user: " + playerName + ")")
   } else {
     // if the diamond existed, say it's gone, otherwise say it's unknown
@@ -169,9 +176,6 @@ function claimDiamond(req, res, next) {
     res.status(status).send(message + diamondId)
   }
 }
-
-var creatingDiamonds = true;
-console.log("creating diamonds");
 
 function resetLeaderBoard(req, res, next) {
   if (!isAllowedReferer(req, config.adminReferer)) return res.status(403).send("forbidden")
@@ -196,8 +200,6 @@ function startCreatingDiamonds(req, res, next) {
   console.log("restarted creating diamonds")
   res.send("restarted creating diamonds")
 }
-
-var leaderBoard = {}
 
 function listLeaderBoard(req, res, next) {
   if (isEmpty(leaderBoard)) {
