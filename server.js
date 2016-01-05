@@ -171,10 +171,8 @@ function claimDiamond(req, res, next) {
       var dx = claimedDiamond.x - playerScore.x;
       var dy = claimedDiamond.y - playerScore.y;
       var dist = Math.sqrt(dx*dx+dy*dy);
-      console.log("dist: " + dist);
       if (dist > 1) {
         var dt = (Date.now() - playerScore.t) / 1000;
-        console.log("time: " + dt);
         if (dt === 0 || dist/dt > 125) {
           // the speed is more than 2.5 times the normal speed of 50 pixels per second
           playerScore.banned = true;
