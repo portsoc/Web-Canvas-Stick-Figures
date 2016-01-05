@@ -149,10 +149,13 @@ function notifyClients() {
 
 function claimDiamond(req, res, next) {
   var diamondId = req.params.id;
+  var claimedDiamond;
+  var claimedDiamondIdx;
+
   var found = diamonds.some(function(diamond, idx) {
     if (diamond.id == diamondId) {
-      diamonds[idx] = diamonds[diamonds.length - 1]
-      diamonds.pop()
+      claimedDiamondIdx = idx;
+      claimedDiamond = diamonds[idx];
       return true;
     }
     return false;
@@ -160,11 +163,42 @@ function claimDiamond(req, res, next) {
 
   if (found) {
     var playerID = req.query.user;
+    var playerScore = leaderBoard[playerID] || (leaderBoard[playerID] = { score: 0, x: claimedDiamond.x, y: claimedDiamond.y, t: Date.now() });
     var playerName = req.query.name || playerID;
 
-    var playerScore = leaderBoard[playerID] || (leaderBoard[playerID] = { score: 0 });
+    // check that the player could be where the diamond is
+    if (!playerScore.banned && config.cheatingPrevention) {
+      var dx = claimedDiamond.x - playerScore.x;
+      var dy = claimedDiamond.y - playerScore.y;
+      var dist = Math.sqrt(dx*dx+dy*dy);
+      console.log("dist: " + dist);
+      if (dist > 1) {
+        var dt = (Date.now() - playerScore.t) / 1000;
+        console.log("time: " + dt);
+        if (dt === 0 || dist/dt > 125) {
+          // the speed is more than 2.5 times the normal speed of 50 pixels per second
+          playerScore.banned = true;
+          playerScore.name = playerScore.name + " (cheated, banned)";
+        }
+      }
+    }
+
+    if (playerScore.banned) {
+      res.status(403).send({msg: "don't cheat!", score: playerScore.score})
+      console.log("user " + playerID + " banned for cheating (name: " + playerName + ")");
+      return;
+    }
+
+    playerScore.x = claimedDiamond.x;
+    playerScore.y = claimedDiamond.y;
+    playerScore.t = Date.now();
+    playerScore.name = playerName;
+
+    // remove the diamond from the list
+    diamonds[claimedDiamondIdx] = diamonds[diamonds.length - 1]
+    diamonds.pop()
+
     playerScore.score += 1
-    playerScore.name = playerName
 
     res.status(200).send({msg: "diamond " + diamondId + " is yours!", score: playerScore.score})
     // notifyClients()
@@ -210,7 +244,7 @@ function listLeaderBoard(req, res, next) {
 }
 
 function isAllowedReferer(req, referers) {
-  if (referers == null) return false;
+  if (referers === null) return false;
   if (referers == "*") {
     console.log("incoming referer: " + req.headers.referer);
     return true;
