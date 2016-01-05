@@ -87,7 +87,7 @@
   var animationTimer =  null;
 
   // when the user sets a new target, we can start animating
-  function startAnimation() {
+  function startAnimating() {
     if (animationTimer === null)
       animationTimer = setInterval(updateAndDrawCurrentState, 1000/framesPerSecond)
   }
@@ -178,7 +178,7 @@
       x: click.left-2,
       y: click.top-2
     }]
-    startAnimation()
+    startAnimating()
   }
 
 
@@ -277,7 +277,7 @@
       return; // no diamonds received, retry in a second
     }
     if (Array.isArray(data)) diamonds = data;
-    startAnimation()
+    startAnimating()
 
     // immediately load diamonds again, the server promises to reply only when something changes
     loadDiamonds()
@@ -288,10 +288,12 @@
     xhr.onload = diamondClaimReturned;
     xhr.open("delete", '/api/diamonds/' + diamond.id + '?user=' + playerID + '&pwd=' + playerPassword + '&name=' + byId('playerName').value, true);
     xhr.send();
+    stopAnimating();
     // on success, the server will update our score
   }
 
   function diamondClaimReturned() {
+    startAnimating();
     if (this.status != 200) return; // someone else got this diamond
 
     // the diamond is ours!
