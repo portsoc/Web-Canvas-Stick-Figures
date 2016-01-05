@@ -2,7 +2,8 @@
 <title>Stick figures on Canvas</title>
 <style>
   /* the canvas is normally invisible so we give it a border */
-  canvas { border: 2px dashed green; display: block; margin: 1em; }
+  canvas { border: 2px dashed green; display: block; margin: 1rem; }
+  button { font-size: 150%; margin-left: 1rem; }
 </style>
 <script src="js/drawing.js"></script>
 <script src="js/stickFigure.js"></script>
@@ -16,6 +17,8 @@
 <a href="sticks3.html">previous</a> | <a href="/">index</a> | <a href="sticks5.html">next</a>
 
 <canvas id="canvas" width="800" height="400"></canvas>
+
+<button id="startstop" onclick="startStopWalking()">Start/Stop</button>
 
 <script>
   // this will make the JavaScript engine much pickier about potential programming issues
@@ -49,8 +52,12 @@
   // how smooth should the animation be (24 frames per second is Hollywood standard)
   var framesPerSecond = 24;
 
+  // whether or not we're currently walking
+  var walking = false;
+
   // draw the scene
   drawEverything(c)
+  startStopWalking();
 
   // update the current state (and re-draw) framesPerSecond times every second (1000 ms)
   setInterval(updateCurrentState, 1000/framesPerSecond)
@@ -68,6 +75,8 @@
   }
 
   function updateCurrentState() {
+    if (!walking) return;
+
     // compute how far we have walked since the last time we've been in this function
     var walkedNow = speed * elapsedTime()
     position = position + direction * walkedNow
@@ -88,5 +97,21 @@
     distanceWalked += walkedNow
 
     drawEverything(c)
+  }
+
+  function startStopWalking() {
+    walking = !walking;
+    // reset timer
+    elapsedTime();
+
+    // update the text of the button
+    byId("startstop").textContent = walking ? "Stop walking" : "Start walking";
+
+    return true;
+  }
+
+  // helpful function for finding elements in the document
+  function byId(id) {
+      return document.getElementById(id);
   }
 </script>
