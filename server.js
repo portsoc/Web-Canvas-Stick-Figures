@@ -211,7 +211,10 @@ function listLeaderBoard(req, res, next) {
 
 function isAllowedReferer(req, referers) {
   if (referers == null) return false;
-  if (referers == "*") return true;
+  if (referers == "*") {
+    console.log("incoming referer: " + req.headers.referer);
+    return true;
+  }
   referers = [].concat(referers); // make sure referers is an array now
   return referers.indexOf(req.headers.referer) >= 0
 }
