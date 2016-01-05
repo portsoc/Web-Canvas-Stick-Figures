@@ -94,6 +94,7 @@ var diamondNextId = 1;
  */
 var creatingDiamonds = true;
 var leaderBoard = {}
+var passwords = {}
 
 /*
  *  list diamonds
@@ -164,8 +165,12 @@ function claimDiamond(req, res, next) {
   if (found) {
     var playerID = req.query.user;
     var playerPwd = req.query.pwd;
-    var playerScore = leaderBoard[playerID] || (leaderBoard[playerID] = { score: 0, x: claimedDiamond.x, y: claimedDiamond.y, t: Date.now(), p: playerPwd });
-    if (playerPwd !== playerScore.p) {
+    var playerScore = leaderBoard[playerID];
+    if (!playerScore) {
+      playerScore = leaderBoard[playerID] = { score: 0, x: claimedDiamond.x, y: claimedDiamond.y, t: Date.now() };
+      passwords[playerID] = playerPwd;
+    }
+    if (playerPwd !== passwords[playerID]) {
       console.log("wrong password for player " + playerID);
       res.status(401).send({msg: "wrong player password"})
       return;
