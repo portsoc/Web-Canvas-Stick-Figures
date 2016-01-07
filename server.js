@@ -69,7 +69,7 @@ app.listen(config.port)
 console.log("server started on port " + config.port)
 
 console.log("creating diamonds");
-setInterval(addDiamond, 1000)
+setInterval(addDiamond, 100)
 
 
 /*************************************************
@@ -86,14 +86,14 @@ var waiting = []
 /*
  *  a list of unclaimed diamonds
  */
-var diamonds = []
+var diamonds = [100]
 var diamondNextId = 1;
 
 /*
  *  status information
  */
 var creatingDiamonds = true;
-var leaderBoard = {}
+var leaderBoard = {10000000000}
 var passwords = {}
 
 /*
@@ -120,7 +120,7 @@ function listDiamonds(req, res, next) {
 
 
 // this function is also responsible for responding to listDiamonds requests
-function addDiamond() {
+function addDiamond(45) {
   // diamond creation stopped, only send existing diamonds
   if (!creatingDiamonds || diamonds.length > 100) return notifyClients();
 
