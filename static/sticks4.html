@@ -4,6 +4,8 @@
   /* the canvas is normally invisible so we give it a border */
   canvas { border: 2px dashed green; display: block; margin: 1rem; }
   button { font-size: 150%; margin-left: 1rem; }
+  .parameter { font-size: 150%; display: inline-block; margin-left: 3em; }
+  .parameter input { display: inline-block; margin-left: 1em; }
 </style>
 <script src="js/drawing.js"></script>
 <script src="js/stickFigure.js"></script>
@@ -19,6 +21,8 @@
 <canvas id="canvas" width="800" height="400"></canvas>
 
 <button id="startstop" onclick="startStopWalking()">Start/Stop</button>
+
+<div class="parameter">Speed: <input type="range" id="slider" oninput="setSpeed(this.value);"></div>
 
 <script>
   // this will make the JavaScript engine much pickier about potential programming issues
@@ -108,6 +112,10 @@
     byId("startstop").textContent = walking ? "Stop walking" : "Start walking";
 
     return true;
+  }
+
+  function setSpeed(val) {
+    speed = val;
   }
 
   // helpful function for finding elements in the document
