@@ -23,13 +23,13 @@
 <h2>Leaders:</h2>
 <ol id="leaders">
   <li>loading...</li>
-  <template id="leaderTemplate">
-    <li>
-      <span class="score"></span>
-      <span class="name"></span>
-    </li>
-  </template>
 </ol>
+<template id="leaderTemplate">
+  <li>
+    <span class="score"></span>
+    <span class="name"></span>
+  </li>
+</template>
 
 <script>
   'use strict';
@@ -40,11 +40,12 @@
 
   function cleanLeaders() {
     var leadersEl = byId('leaders');
-    var oldLeaders = array(leadersEl.querySelectorAll('li'));
-
-    oldLeaders.forEach(function(el) {
-        leadersEl.removeChild(el);
-    });
+    leadersEl.innerHTML = '';
+    // var oldLeaders = array(leadersEl.querySelectorAll('li'));
+    //
+    // oldLeaders.forEach(function(el) {
+    //     leadersEl.removeChild(el);
+    // });
   }
 
   var oldLoad = null;
