@@ -35,7 +35,6 @@
   'use strict';
   document.body.onload = function() {
     loadLeaders()
-    setInterval(loadLeaders, 1000)
   }
 
 
@@ -56,6 +55,7 @@
     xhr.onload = populateLeaders;
     xhr.onerror = function() {
         console.error("error loading leaders");
+        setTimeout(loadLeaders, 1000)
     }
     xhr.open("get", '/api/scores/', true);
     xhr.send();
@@ -71,6 +71,7 @@
 
 
   function populateLeaders() {
+    setTimeout(loadLeaders, 1000)
     cleanLeaders();
     oldLoad = null
 
