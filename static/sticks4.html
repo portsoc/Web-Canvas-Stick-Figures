@@ -66,6 +66,9 @@
   // update the current state (and re-draw) framesPerSecond times every second (1000 ms)
   setInterval(updateCurrentState, 1000/framesPerSecond)
 
+  // replace the above with the line below, and uncomment the next line like this, for smooth animation
+  // requestAnimationFrame(updateCurrentState)
+
 
   function drawEverything(c) {
     // clear the canvas - we'll redraw everything
@@ -101,6 +104,8 @@
     distanceWalked += walkedNow
 
     drawEverything(c)
+
+    // requestAnimationFrame(updateCurrentState);
   }
 
   function startStopWalking() {
