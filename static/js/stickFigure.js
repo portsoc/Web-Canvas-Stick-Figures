@@ -12,16 +12,17 @@
     x+=.5
     y+=.5
 
-    // head is a circle with eyes and a smile
-    circle(c, x, y-100, 20)         // head
-    drawFace(c, x, y-100, facing)   // face
-
     // body is just a line
     line(c, x, y-40, x, y-80)       // body
 
     // the arms and the legs look the same
     drawLimbs(c, x, y, distance)    // legs
     drawLimbs(c, x, y-40, distance) // arms
+
+    // head is a circle with eyes and a smile
+    // face drawn last so the body doesn't draw over it
+    circle(c, x, y-100, 20)         // head
+    drawFace(c, x, y-100, facing)   // face
 
     // draws the limbs; with the `distance` parameter, the limbs are drawn as an in-motion snapshot
     function drawLimbs(c, x, y, distance) {
@@ -66,13 +67,28 @@
       // we'll fake the turning of the face by shifting the eyes and the smile by an offset of up to 10 pixels
       var faceOffset = (facing-90)/9;
 
-      circle(c, x-7-faceOffset, y-5, 1)  // 7 is distance from center, 5 is how high the eyes are from the head's center, 1 is eye size
-      circle(c, x+7-faceOffset, y-5, 1)
+      circle(c, x-7-faceOffset, y-5, 1);  // 7 is distance from center, 5 is how high the eyes are from the head's center, 1 is eye size
+      circle(c, x+7-faceOffset, y-5, 1);
 
       // decrease the smile size here
       var smileSize = 70; // size of smile in degrees of angle; 360 would be a full circle
-      var startAngle = rad(90-smileSize/2-2*faceOffset)
-      var endAngle   = rad(90+smileSize/2-2*faceOffset)
-      arc(c, x-faceOffset, y, 12, startAngle, endAngle) // 12 is the radius of the smile circle
+      var startAngle = rad(90-smileSize/2-2*faceOffset);
+      var endAngle   = rad(90+smileSize/2-2*faceOffset);
+      arc(c, x-faceOffset, y, 12, startAngle, endAngle); // 12 is the radius of the smile circle
+
+      // now a moustache
+      var moSize = 70; // size of smile in degrees of angle; 360 would be a full circle
+      startAngle = rad(90-moSize/2);
+      endAngle   = rad(90+moSize/2);
+      arc(c, x-faceOffset-7, y-1, 8, startAngle-.17, endAngle-.17);
+      arc(c, x-faceOffset+7, y-1, 8, startAngle+.17, endAngle+.17);
+
+      // and a pointy beard
+      c.beginPath();
+      c.moveTo(x-faceOffset-6, y+15);
+      c.lineTo(x-faceOffset, y+30);
+      c.lineTo(x-faceOffset+6, y+15);
+      c.fill();
+      c.stroke();
     }
   }
