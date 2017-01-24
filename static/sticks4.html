@@ -34,7 +34,7 @@
   // set our drawing style
   c.lineWidth = 3;
   c.lineCap = "round";
-  c.lineJoin = "round"
+  c.lineJoin = "round";
   c.strokeStyle = "#000";
 
   // the stick figure will walk on a horizontal path from x=100 to x=700
@@ -53,65 +53,65 @@
   // how many pixels the stick figure can walk per second
   var speed = 50;
 
-  // how smooth should the animation be (24 frames per second is Hollywood standard)
-  var framesPerSecond = 24;
-
   // whether or not we're currently walking
   var walking = false;
 
   // draw the scene
-  drawEverything(c)
+  drawEverything(c);
   startStopWalking();
 
-  // update the current state (and re-draw) framesPerSecond times every second (1000 ms)
-  setInterval(updateCurrentState, 1000/framesPerSecond)
-
-  // replace the above with the line below, and uncomment the next line like this, for smooth animation
-  // requestAnimationFrame(updateCurrentState)
+  // alternatively, comment out every "requestAnimationFrame" line and uncomment the two lines below
+  // here, we tell the browser to update the current state (and re-draw) framesPerSecond times every second (1000 ms)
+  // var framesPerSecond = 12;
+  // setInterval(updateCurrentState, 1000/framesPerSecond)
 
 
   function drawEverything(c) {
     // clear the canvas - we'll redraw everything
-    c.clearRect(0,0,800,600)
+    c.clearRect(0,0,800,600);
 
     // this is our walking stick figure
     drawStickFigure(c, position, 350, (1-direction)*90, distanceWalked);
 
     // this is a watching stick figure
-    drawStickFigure(c, 400, 180, 180*(pathEnd - position)/(pathEnd - pathStart))
+    drawStickFigure(c, 400, 180, 180*(pathEnd - position)/(pathEnd - pathStart));
   }
 
   function updateCurrentState() {
     if (!walking) return;
 
     // compute how far we have walked since the last time we've been in this function
-    var walkedNow = speed * elapsedTime()
-    position = position + direction * walkedNow
+    var walkedNow = speed * elapsedTime();
+    position = position + direction * walkedNow;
 
     // at the end of the path, we turn around
     if (position > pathEnd) {
       direction = -1;
-      position = pathEnd - (position - pathEnd)
+      position = pathEnd - (position - pathEnd);
     }
 
     // at the beginning of the path, we turn around
     if (position < pathStart) {
       direction = 1;
-      position = pathStart + (pathStart - position)
+      position = pathStart + (pathStart - position);
     }
 
     // update the distance walked so the stride matches
-    distanceWalked += walkedNow
+    distanceWalked += walkedNow;
 
-    drawEverything(c)
+    drawEverything(c);
 
-    // requestAnimationFrame(updateCurrentState);
+    // for smooth animation, tell the browser to call our redraw function the next time it wants a new image frame
+    requestAnimationFrame(updateCurrentState);
   }
 
   function startStopWalking() {
     walking = !walking;
-    // reset timer
+    // reset timer - ignore the time that has passed since last something happened
     elapsedTime();
+
+    // start drawing again if we started walking
+    if (walking) updateCurrentState();
 
     // update the text of the button
     byId("startstop").textContent = walking ? "Stop walking" : "Start walking";

@@ -24,7 +24,7 @@
 
 <h1>Stick figures on Canvas: hunting diamonds in multiplayer</h1>
 
-<a href="sticks7.html">previous</a> | <a href="/">index</a> | <a href="sticks8_cheat1.html">next</a> | <a href="leaders" target="_blank">score board</a>
+<a href="sticks7.html">previous</a> | <a href="/">index</a> | <span style="color: #888">next</span> | <a href="leaders" target="_blank">score board</a>
 
 <aside>
   Score: <span id="score">0</span>
@@ -39,8 +39,8 @@
   'use strict';
 
   // add a click event handler on the canvas so we can tell the stick figure where to go
-  var canvas = document.getElementById("canvas")
-  canvas.addEventListener('click', addTarget)
+  var canvas = document.getElementById("canvas");
+  canvas.addEventListener('click', addTarget);
 
   // get the "drawing context" - the object that can actually draw on the canvas
   var c = canvas.getContext("2d");
@@ -48,7 +48,7 @@
   // set our drawing style
   c.lineWidth = 3;
   c.lineCap = "round";
-  c.lineJoin = "round"
+  c.lineJoin = "round";
   c.strokeStyle = "#000";
 
 
@@ -56,8 +56,8 @@
   var distanceWalked = 0;
 
   // the stick figure's current position on the canvas, initially random
-  var positionX = Math.floor(Math.random()*(canvas.width-100)+50)
-  var positionY = Math.floor(Math.random()*(canvas.height-120)+100)
+  var positionX = Math.floor(Math.random()*(canvas.width-100)+50);
+  var positionY = Math.floor(Math.random()*(canvas.height-120)+100);
 
   // this is a stable ID by which the server identifies us in the scores
   // this allows us to set our name at any point without losing the score
@@ -69,102 +69,104 @@
   var playerPassword = Math.random();
 
   // the coordinates of targets clicked by the user
-  var targets = []
+  var targets = [];
 
   // the coordinates of diamonds (see addDiamond below)
-  var diamonds = []
+  var diamonds = [];
 
   // how many pixels the stick figure can walk per second
   var speed = 50;
 
-  // how smooth should the animation be (24 frames per second is Hollywood standard)
-  var framesPerSecond = 24;
+  // this variable controls when we're walking
+  var walking = false;
 
   // draw the scene
-  updateAndDrawCurrentState()
+  updateAndDrawCurrentState();
 
-  // when we're animating, this variable holds the timer that calls us framesPerSecond times every second
-  var animationTimer =  null;
+  // when the user sets a new target or we have a diamond, we can start walking
+  function startWalking() {
+    if (walking) return; // already walking, no need to do anything
 
-  // when the user sets a new target, we can start animating
-  function startAnimating() {
-    if (animationTimer === null)
-      animationTimer = setInterval(updateAndDrawCurrentState, 1000/framesPerSecond)
+    walking = true;
+
+    // reset timer - ignore the time that has passed since last something happened
+    elapsedTime();
+
+    updateAndDrawCurrentState();
   }
 
-  // this function can be called to stop the animation (when the stick figure has reached the target)
-  function stopAnimating() {
-    if (animationTimer !== null) {
-      clearInterval(animationTimer)
-      animationTimer = null
-      stopTime()
-    }
+  // this function can be called to stop the animation (when the stick figure has reached the last target)
+  function stopWalking() {
+    walking = false;
   }
 
   function updateAndDrawCurrentState() {
     // clear the canvas - we'll redraw everything
-    c.clearRect(0,0,c.canvas.width,c.canvas.height)
+    c.clearRect(0,0,c.canvas.width,c.canvas.height);
 
     // draw diamonds, and the targets over the diamonds
     diamonds.forEach(function (diamond) {
-      drawDiamond(c, diamond.x, diamond.y, diamond.color)
-    })
+      drawDiamond(c, diamond.x, diamond.y, diamond.color);
+    });
     targets.forEach(function (target) {
-      drawTarget(c, target.x, target.y)
-    })
+      drawTarget(c, target.x, target.y);
+    });
 
     // get the nearest target to walk towards
-    var target = selectNearestTarget(positionX, positionY, targets)
+    var target = selectNearestTarget(positionX, positionY, targets);
 
     // only walk to diamonds if we don't have a clicked target
-    if (target === null) target = selectNearestTarget(positionX, positionY, diamonds)
+    if (target === null) target = selectNearestTarget(positionX, positionY, diamonds);
 
     if (target === null) {
       // there are no more targets and diamonds, no need to walk any further
-      drawStickFigure(c, positionX, positionY)
+      drawStickFigure(c, positionX, positionY);
       // reset the stride so the stick figure can rest with legs comfortably spread
-      distanceWalked = 0
+      distanceWalked = 0;
       // when we're not moving, we need not wake up all the time and re-draw
-      stopAnimating()
-      return
+      stopWalking();
+      return;
     }
 
     // compute how far we have walked since the last time we've been in this function
-    var walkedNow = speed * elapsedTime()
+    var walkedNow = speed * elapsedTime();
 
     if (walkedNow > target.distance) {
-      walkedNow = target.distance // don't walk past the target
+      walkedNow = target.distance; // don't walk past the target
 
       if (target.isDiamond) claimDiamond(target); // got a diamond! maybe...
 
       // remove the first element in the appropriate array (selectNearestTarget puts the nearest target there)
-      if (target.isDiamond) diamonds.shift()
-      else                  targets.shift()
+      if (target.isDiamond) diamonds.shift();
+      else                  targets.shift();
     }
 
     // compute the angle towards the target
     // note that direction here is in radians (full circle is 2π) and not in degrees as usual for us
-    var direction = 0
+    var direction = 0;
     if (target.distance > 0.01) { // only face towards the target when we're some distance away from it
-      direction = Math.acos((target.x-positionX)/target.distance)
+      direction = Math.acos((target.x-positionX)/target.distance);
       if ((target.y-positionY) < 0) direction = -direction;
     }
 
     // take the next step
-    positionX = positionX + Math.cos(direction)*walkedNow
-    positionY = positionY + Math.sin(direction)*walkedNow
+    positionX = positionX + Math.cos(direction)*walkedNow;
+    positionY = positionY + Math.sin(direction)*walkedNow;
 
     // update the distance walked so the stride matches
-    distanceWalked += walkedNow
+    distanceWalked += walkedNow;
 
     // this is our walking stick figure
     // notice the conversion of the direction to degrees
     drawStickFigure(c, positionX, positionY, deg(direction), distanceWalked);
+
+    // for smooth animation, tell the browser to call our redraw function next time it wants a new image frame
+    if (walking) requestAnimationFrame(updateAndDrawCurrentState);
   }
 
   // this will update the score in the page
   function setScore(score) {
-    byId("score").textContent = score
+    byId("score").textContent = score;
   }
 
 
@@ -172,13 +174,13 @@
   // when the user clicks, we put a target where the user clicked, and start walking
   function addTarget(event) {
     // replace the list of targets with only one at the click
-    var click = getClickCoordinates(event, canvas)
+    var click = getClickCoordinates(event, canvas);
     // 2 is the width of the border we've given our canvas
     targets = [{
       x: click.left-2,
-      y: click.top-2
-    }]
-    startAnimating()
+      y: click.top-2,
+    }];
+    startWalking();
   }
 
 
@@ -187,57 +189,57 @@
   // this function computes the current distance of all the targets in the list and finds the nearest one
   // after this function finishes, the nearest target is list[0]
   function selectNearestTarget(x, y, list) {
-    var nearestTarget = null
-    var nearestDistance = Infinity
-    var nearestIndex = null
+    var nearestTarget = null;
+    var nearestDistance = Infinity;
+    var nearestIndex = null;
 
     list.forEach(function (target, idx) {
-      target.distance = Math.sqrt(Math.pow(target.x-x, 2) + Math.pow(target.y-y, 2))
+      target.distance = Math.sqrt(Math.pow(target.x-x, 2) + Math.pow(target.y-y, 2));
       if (target.distance < nearestDistance) {
-        nearestDistance = target.distance
-        nearestTarget = target
-        nearestIndex = idx
+        nearestDistance = target.distance;
+        nearestTarget = target;
+        nearestIndex = idx;
       }
-    })
+    });
 
     if (nearestTarget) {
       // put the nearestTarget as the first one in the list so it's easy to remove
-      var tmp = list[0]
-      list[0] = list[nearestIndex]
-      list[nearestIndex] = tmp
+      var tmp = list[0];
+      list[0] = list[nearestIndex];
+      list[nearestIndex] = tmp;
     }
 
-    return nearestTarget
+    return nearestTarget;
   }
 
 
   // draw a target at x,y
   function drawTarget(c, x, y) {
-    line(c, x-10, y, x+10, y)
-    line(c, x, y-10, x, y+10)
+    line(c, x-10, y, x+10, y);
+    line(c, x, y-10, x, y+10);
   }
 
   // draw a diamond of a given color (as a CSS color string) at x,y
   function drawDiamond(c, x, y, color) {
-    c.save()
-    c.beginPath()
-    c.moveTo(x-20, y)
-    c.lineTo(x, y+20)
-    c.lineTo(x+20, y)
-    c.lineTo(x, y-8)
-    c.lineTo(x-20, y)
+    c.save();
+    c.beginPath();
+    c.moveTo(x-20, y);
+    c.lineTo(x, y+20);
+    c.lineTo(x+20, y);
+    c.lineTo(x, y-8);
+    c.lineTo(x-20, y);
     c.fillStyle=color;
-    c.fill()
-    c.lineTo(x-9, y+3)
-    c.lineTo(x, y+20)
-    c.lineTo(x+9, y+3)
-    c.lineTo(x, y-8)
-    c.lineTo(x-9, y+3)
-    c.lineTo(x+9, y+3)
-    c.lineTo(x+20, y)
-    c.lineWidth = 1
-    c.stroke()
-    c.restore()
+    c.fill();
+    c.lineTo(x-9, y+3);
+    c.lineTo(x, y+20);
+    c.lineTo(x+9, y+3);
+    c.lineTo(x, y-8);
+    c.lineTo(x-9, y+3);
+    c.lineTo(x+9, y+3);
+    c.lineTo(x+20, y);
+    c.lineWidth = 1;
+    c.stroke();
+    c.restore();
   }
 
 
@@ -257,48 +259,48 @@
   function loadDiamonds() {
     var xhr = new XMLHttpRequest();
     xhr.onload = receivedDiamonds;
-    xhr.onerror = function() { setTimeout(loadDiamonds, 1000) }
+    xhr.onerror = function() { setTimeout(loadDiamonds, 1000) };
     xhr.open("get", '/api/diamonds/', true);
     xhr.send();
   }
 
-  loadDiamonds()
+  loadDiamonds();
 
   function receivedDiamonds() {
     if (this.status >= 300) {
-      setTimeout(loadDiamonds, 1000)
+      setTimeout(loadDiamonds, 1000);
       return; // no diamonds received, retry in a second
     }
 
     try {
       var data = JSON.parse(this.responseText);
     } catch (e) {
-      setTimeout(loadDiamonds, 1000)
+      setTimeout(loadDiamonds, 1000);
       return; // no diamonds received, retry in a second
     }
     if (Array.isArray(data)) diamonds = data;
-    startAnimating()
+    startWalking();
 
     // immediately load diamonds again, the server promises to reply only when something changes
-    loadDiamonds()
+    loadDiamonds();
   }
 
   function claimDiamond(diamond) {
     var xhr = new XMLHttpRequest();
-    xhr.onload = diamondClaimReturned;
     xhr.open("delete", '/api/diamonds/' + diamond.id + '?user=' + playerID + '&pwd=' + playerPassword + '&name=' + byId('playerName').value, true);
+    xhr.onload = diamondClaimReturned;
     xhr.send();
-    stopAnimating();
+    stopWalking();
     // on success, the server will update our score
   }
 
   function diamondClaimReturned() {
-    startAnimating();
+    startWalking();
     if (this.status != 200) return; // someone else got this diamond
 
     // the diamond is ours!
     var data = JSON.parse(this.responseText);
-    setScore(data.score)
+    setScore(data.score);
   }
 
 </script>

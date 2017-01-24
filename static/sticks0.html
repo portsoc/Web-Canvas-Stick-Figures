@@ -1,5 +1,5 @@
 <!doctype html>
-<title>Stick figures on Canvas</title>
+<title>Drawing on Canvas</title>
 <style>
   /* the canvas is normally invisible
   so we give it a border */
@@ -15,9 +15,9 @@
      on which we draw just a bit
   -->
 
-<h1>Stick figures on Canvas</h1>
+<h1>Drawing on Canvas</h1>
 
-<span style="color: #888">previous |</span> <a href="/">index</a> | <a href="sticks1.html">next</a>
+<span style="color: #888">previous</span> | <a href="/">index</a> | <a href="sticks1.html">next</a>
 
 <canvas id="canvas" width="800" height="500">
 </canvas>
@@ -29,28 +29,33 @@
   'use strict';
 
   // get the "drawing context" - the object that can actually draw on the canvas
-  var c = document.getElementById("canvas").getContext("2d")
+  var c = document.getElementById("canvas").getContext("2d");
 
   // set our drawing style
-  c.lineWidth = 3
-  c.lineCap = "round"
-  c.lineJoin = "round"
-  c.strokeStyle = "red"
+  c.lineWidth = 3;
+  c.lineCap = "round";
+  c.lineJoin = "round";
+  c.strokeStyle = "red";
 
-  // uncomment the following code to draw on the canvas
+  // draw a line
+  c.beginPath();
+  c.moveTo(0,0);
+  c.lineTo(400, 200);
+  c.stroke();
 
-  // // draw a line
-  // c.beginPath()
-  // c.moveTo(0,0)
-  // c.lineTo(400, 200)
-  // c.stroke()
+  // draw a circle
+  c.fillStyle="white";
+  c.strokeStyle = "green";
+  c.beginPath();
+  // 6.3 is bigger than 2π so the arc will be a whole circle
+  c.arc(200, 100, 60, 0, 6.3, false);
+  c.fill();
+  c.stroke();
 
-  // // draw a circle
-  // c.fillStyle="white"
-  // c.strokeStyle = "green"
-  // c.beginPath()
-  // // 6.3 is bigger than 2π so the arc will be a whole circle
-  // c.arc(200, 100, 60, 0, 6.3, false)
-  // c.fill()
-  // c.stroke()
+  // move line to 200,160 -> 200, 320
+  // add another 200,320 -> 250,480
+  // add another 200,320 -> 150,480
+  // add another 200,160 -> 250,320
+  // add another 200,160 -> 150,320
+  // then remove most of the beginPaths and strokes
 </script>

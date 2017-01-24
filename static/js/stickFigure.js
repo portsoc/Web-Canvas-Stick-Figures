@@ -12,16 +12,16 @@
     x+=.5
     y+=.5
 
-    // the arms and the legs look the same
-    drawLimbs(c, x, y, distance)    // legs
-    drawLimbs(c, x, y-40, distance) // arms
+    // head is a circle with eyes and a smile
+    circle(c, x, y-100, 20)         // head
+    drawFace(c, x, y-100, facing)   // face
 
     // body is just a line
     line(c, x, y-40, x, y-80)       // body
 
-    // head is a circle with eyes and a smile
-    circle(c, x, y-100, 20)         // head
-    drawFace(c, x, y-100, facing)   // face
+    // the arms and the legs look the same
+    drawLimbs(c, x, y, distance)    // legs
+    drawLimbs(c, x, y-40, distance) // arms
 
     // draws the limbs; with the `distance` parameter, the limbs are drawn as an in-motion snapshot
     function drawLimbs(c, x, y, distance) {
@@ -64,10 +64,7 @@
       if (facing > 180) return;  // facing away from us, don't draw a face
 
       // we'll fake the turning of the face by shifting the eyes and the smile by an offset of up to 10 pixels
-      var faceOffset = 0;
-      if (facing <= 180) {
-        faceOffset = (facing-90)/9;
-      }
+      var faceOffset = (facing-90)/9;
 
       circle(c, x-7-faceOffset, y-5, 1)  // 7 is distance from center, 5 is how high the eyes are from the head's center, 1 is eye size
       circle(c, x+7-faceOffset, y-5, 1)
