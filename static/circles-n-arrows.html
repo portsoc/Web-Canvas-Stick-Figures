@@ -7,9 +7,11 @@
   span.c { display: inline-block; /* prevent wrapping */ }
 </style>
 
+<canvas id="hili" width="100" height="100"></canvas>
+
 <h1>circling words</h1>
 
-<p>This example uses a canvas over the page on which we can draw word highlights. Every <span class=c>&lt;span class=c&gt;</span> element, presumed not to wrap to a next line, is encircled, and connected by an arrow to the next one.</p>
+<p>This example uses a canvas under the page on which we can draw word highlights. Every <span class=c>&lt;span class=c&gt;</span> element, forced not to wrap to a next line, is highlighted, and connected by a line to the next one.</p>
 
 <p>The rest is lorem ipsum.</p>
 
@@ -19,64 +21,44 @@
 
 <p>Fusce bibendum tellus dui. Nam massa tortor, tincidunt vitae orci sit amet, mollis porttitor libero. In nec elit laoreet, condimentum mi quis, <span class=c>ultricies</span> turpis. Nulla facilisi. Duis sed dui vitae nisl eleifend dapibus. Vestibulum erat leo, condimentum sit amet nunc in, luctus dignissim mi. Pellentesque in tempor ligula, id tristique dui. Aenean ut turpis vel leo molestie rutrum eu ac felis. Vestibulum lacinia tincidunt euismod. Nunc imperdiet nisl et gravida rutrum. Nunc tristique turpis non faucibus rhoncus. Maecenas sed justo pellentesque, bibendum ex id, blandit erat. Maecenas molestie dictum consectetur.</p>
 
-<canvas id="hili" width="100" height="100"></canvas>
-
 <script>
 
   'use strict';
-  window.addEventListener('load', resizeAndDraw);
-  window.addEventListener('scroll', draw);
-  window.addEventListener('resize', resizeAndDraw);
+  window.addEventListener('load', resizeAndDraw);   // initial draw
+  window.addEventListener('scroll', draw);          // if we move the page we need to redraw because the canvas doesn't move
+  window.addEventListener('resize', resizeAndDraw); // if we resize the page, it may reflow so we must redraw
 
   function draw() {
     const c = window.hili.getContext("2d");
 
     c.lineWidth = 4;
     c.strokeStyle = "#f00";
+    c.fillStyle = "#ff0";
     c.lineCap = "round";
 
-    let lastCX, lastCY, lastRX, lastRY;
+    let lastCX, lastCY;
 
     const words = document.querySelectorAll('span.c');
     for (let el of words) {
-      // draw an ellipse around the word
+
+      // find dimentions of the element
       const elTop = offY(el) - window.scrollY;
       const elLeft = offX(el) - window.scrollX;
-      let elRX = el.offsetWidth / 2;
-      let elRY = el.offsetHeight / 2;
-      const elCX = elLeft + elRX;
-      const elCY = elTop + elRY;
+      const elW = el.offsetWidth;
+      const elH = el.offsetHeight;
+      const elCX = elLeft + elW/2;
+      const elCY = elTop + elH/2;
 
-      // add padding inside the ellipse
-      elRX += 10;
-      elRY += 5;
-
-      ell(c, elCX, elCY, elRX, elRY);
+      // draw an ellipse under the word to highlight it, padding it a bit
+      ell(c, elCX, elCY, elW/2+10, elH/2+5);
 
       if (lastCX != null) {
-        // draw an arrow from the previous word to the current one
-        // from lastCX, lastCY to elCX, elCY
-        // find the intersections of the line with the ellipses
-        // form http://mathworld.wolfram.com/Ellipse-LineIntersection.html
-
-        const lastX0 = elCX - lastCX;
-        const lastY0 = elCY - lastCY;
-        const lastD = lastRX * lastRY / Math.sqrt( lastRX * lastRX * lastY0 * lastY0 + lastRY * lastRY * lastX0 * lastX0 );
-        const elX0 = lastCX - elCX;
-        const elY0 = lastCY - elCY;
-        // pretend the target ellipse is a bit wider so the arrow doesn't quite touch it
-        const elRX2 = elRX + 10;
-        const elRY2 = elRY + 10;
-        const elD = elRX2 * elRY2 / Math.sqrt( elRX2 * elRX2 * elY0 * elY0 + elRY2 * elRY2 * elX0 * elX0 );
-
-        arrow(c, lastCX + lastX0 * lastD, lastCY + lastY0 * lastD,
-                 elCX + elX0 * elD, elCY + elY0 * elD);
+        // draw a line from the previous word to the current one
+        line(c, lastCX, lastCY, elCX, elCY);
       }
 
       lastCX = elCX;
       lastCY = elCY;
-      lastRX = elRX;
-      lastRY = elRY;
     }
   }
 
@@ -88,45 +70,22 @@
 
 
   // helpful drawing functions
-  // ellipse
+  // ellipse centered on x,y, with horizontal radius rx, vertical radius ry
   function ell(c, x, y, rx, ry) {
-    const d=ry/rx;
+    const d=ry/rx; // draw the ellipse as a squashed circle
     c.beginPath();
     c.save();
     c.scale(1, d);
     c.arc(x, y/d, rx, 0, 6.3, false);
     c.restore();
-    c.stroke();
+    c.fill();
   }
-  // draw arrow from x1,y1 to x2,y2
-  function arrow(c, x1, y1, x2, y2) {
+  // draw line from x1,y1 to x2,y2
+  function line(c, x1, y1, x2, y2) {
     // draw the line
     c.beginPath();
     c.moveTo(x1,y1);
     c.lineTo(x2,y2);
-    c.stroke();
-
-    // now draw arrow at x2,y2 for a line that comes from x1,y1
-    const arrWidth = 10;
-    const arrLength = arrWidth*2;
-
-    // normalize x1,y1 to be a 1px vector
-    const l = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
-    x1 = (x1-x2)/l;
-    y1 = (y1-y2)/l;
-
-    let a = Math.acos(x1);
-    if (y1 < 0) a = -a;
-
-    c.beginPath();
-    c.save();
-    c.translate(x2, y2);
-    c.rotate(a);
-    c.moveTo(0,0);
-    c.lineTo(arrLength,-arrWidth);
-    c.moveTo(0,0);
-    c.lineTo(arrLength,arrWidth);
-    c.restore();
     c.stroke();
   }
 
