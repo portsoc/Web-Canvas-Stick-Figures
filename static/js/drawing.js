@@ -21,12 +21,24 @@ function circle(c, x, y, r) {
 }
 
 
-// draw an arc on canvas context `c`, cenetered on x,y, with radius r, from angleStart to angleEnd
+// draw an arc on canvas context `c`, centered on x,y, with radius r, from angleStart to angleEnd
 function arc(c, x, y, r, angleStart, angleEnd) {
   c.beginPath();
   c.arc(x, y, r, angleStart, angleEnd, false);
   c.stroke();
 }
+
+// fill an ellipse on canvas context `c`, centered on x,y, with horizontal radius rx, vertical radius ry
+function ell(c, x, y, rx, ry) {
+  const d=ry/rx; // draw the ellipse as a squashed circle
+  c.beginPath();
+  c.save();
+  c.scale(1, d);
+  c.arc(x, y/d, rx, 0, 6.3, false);
+  c.restore();
+  c.fill();
+}
+
 
 // convert from degrees to radians
 function rad(x) {

@@ -1,13 +1,16 @@
 <!doctype html>
 <html lang="en">
-<title>circling words</title>
+<title>drawing under text</title>
 
 <style>
   canvas { position: fixed; top: 0; left: 0; z-index: -1; }
   span.c { display: inline-block; /* prevent wrapping */ }
+  p { min-width: 30em; }
 </style>
+<script src="js/drawing.js"></script>
+<script src="js/stickFigure.js"></script>
 
-<h1>Circling words with canvas</h1>
+<h1>drawing under text with canvas</h1>
 
 <a href="/">index</a>
 
@@ -46,6 +49,8 @@
     c.fillStyle = "#ff0";
     c.lineCap = "round";
 
+    // drawStickFigure(c, 100, 200, 45);
+
     let lastCX, lastCY;
 
     const words = document.querySelectorAll('span.c');
@@ -70,26 +75,6 @@
       lastCX = elCX;
       lastCY = elCY;
     }
-  }
-
-  // helpful drawing functions
-  // ellipse centered on x,y, with horizontal radius rx, vertical radius ry
-  function ell(c, x, y, rx, ry) {
-    const d=ry/rx; // draw the ellipse as a squashed circle
-    c.beginPath();
-    c.save();
-    c.scale(1, d);
-    c.arc(x, y/d, rx, 0, 6.3, false);
-    c.restore();
-    c.fill();
-  }
-  // draw line from x1,y1 to x2,y2
-  function line(c, x1, y1, x2, y2) {
-    // draw the line
-    c.beginPath();
-    c.moveTo(x1,y1);
-    c.lineTo(x2,y2);
-    c.stroke();
   }
 
   // positions of a given element in a given root element
