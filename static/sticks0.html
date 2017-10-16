@@ -33,29 +33,45 @@
 
   // set our drawing style
   c.lineWidth = 3;
+  c.strokeStyle = "red";
+  c.fillStyle = "#0ff";
+
   c.lineCap = "round";   // or butt or square
   c.lineJoin = "round";  // or bevel or miter
-  c.strokeStyle = "red";
 
   // c.setLineDash([20,20]); // works best with lineCap butt
 
   // draw a line
-  c.beginPath();
-  c.moveTo(0,0);
-  c.lineTo(400, 200);
-  // c.lineTo(400, 0);
-  c.stroke();
+  // c.beginPath();
+  // c.moveTo(0, 0);
+  // c.lineTo(400, 200);
+  // c.stroke();
+
+  // draw a triangle
+  // c.beginPath();
+  // c.moveTo(200, 450);
+  // c.lineTo(400, 150);
+  // c.lineTo(600, 450);
+  // c.fill();
+
+  // c.stroke();
+
+  // c.closePath();
+  // c.stroke();
 
   // draw a circle
-  c.fillStyle="white";
-  c.strokeStyle = "green";
-  c.beginPath();
-  // 6.3 is bigger than 2π so the arc will be a whole circle
-  c.arc(200, 100, 60, 0, 6.3, false);
-  c.fill();
-  c.stroke();
+  // c.fillStyle="white";
+  // c.strokeStyle = "green";
+  // c.beginPath();
+  // // 6.3 is bigger than 2π so the arc will be a whole circle
+  // c.arc(400, 150, 100, 0, 6.3, false);
+  // c.fill();
+  // c.stroke();
 
-  // move line to 200,160 -> 200,320
+  // exercise for you:
+  // drop the triangle
+  // change the arc to 200,100,60
+  // change the line to 200,160 -> 200,320
   // add another 200,320 -> 250,480
   // add another 200,320 -> 150,480
   // add another 200,160 -> 250,320
