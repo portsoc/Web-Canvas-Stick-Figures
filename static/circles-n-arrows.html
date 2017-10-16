@@ -7,9 +7,11 @@
   span.c { display: inline-block; /* prevent wrapping */ }
 </style>
 
-<canvas id="hili" width="100" height="100"></canvas>
+<h1>Circling words with canvas</h1>
 
-<h1>circling words</h1>
+<a href="/">index</a>
+
+<canvas id="hili" width="100" height="100"></canvas>
 
 <p>This example uses a canvas under the page on which we can draw word highlights. Every <span class=c>&lt;span class=c&gt;</span> element, forced not to wrap to a next line, is highlighted, and connected by a line to the next one.</p>
 
@@ -21,16 +23,24 @@
 
 <p>Fusce bibendum tellus dui. Nam massa tortor, tincidunt vitae orci sit amet, mollis porttitor libero. In nec elit laoreet, condimentum mi quis, <span class=c>ultricies</span> turpis. Nulla facilisi. Duis sed dui vitae nisl eleifend dapibus. Vestibulum erat leo, condimentum sit amet nunc in, luctus dignissim mi. Pellentesque in tempor ligula, id tristique dui. Aenean ut turpis vel leo molestie rutrum eu ac felis. Vestibulum lacinia tincidunt euismod. Nunc imperdiet nisl et gravida rutrum. Nunc tristique turpis non faucibus rhoncus. Maecenas sed justo pellentesque, bibendum ex id, blandit erat. Maecenas molestie dictum consectetur.</p>
 
+<!-- use a normal text with "this is a secret message" ? -->
+
 <script>
 
   'use strict';
-  window.addEventListener('load', resizeAndDraw);   // initial draw
-  window.addEventListener('scroll', draw);          // if we move the page we need to redraw because the canvas doesn't move
-  window.addEventListener('resize', resizeAndDraw); // if we resize the page, it may reflow so we must redraw
+  window.addEventListener('load', draw);   // initial draw
+  window.addEventListener('scroll', draw); // if we move the page we need to redraw because the canvas doesn't move
+  window.addEventListener('resize', draw); // if we resize the page, it may reflow so we must redraw
 
   function draw() {
+    // set the canvas size to the window size (this also clears it)
+    window.hili.width = window.innerWidth;
+    window.hili.height = window.innerHeight;
+
+    // get the context
     const c = window.hili.getContext("2d");
 
+    // set the drawing style
     c.lineWidth = 4;
     c.strokeStyle = "#f00";
     c.fillStyle = "#ff0";
@@ -61,13 +71,6 @@
       lastCY = elCY;
     }
   }
-
-  function resizeAndDraw() {
-    window.hili.width = window.innerWidth;
-    window.hili.height = window.innerHeight;
-    draw();
-  }
-
 
   // helpful drawing functions
   // ellipse centered on x,y, with horizontal radius rx, vertical radius ry
