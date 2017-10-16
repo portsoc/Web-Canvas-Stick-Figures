@@ -1,0 +1,82 @@
+<!doctype html>
+<title>Joins, continuing dashes</title>
+<style>
+  /* the canvas is normally invisible
+  so we give it a border */
+  canvas {
+    border: 2px dashed green;
+    display: block;
+    margin: 1em;
+  }
+</style>
+
+<!--
+     in this file, we have an HTML5 canvas,
+     on which we draw just a bit
+  -->
+
+<h1>Joins, continuing dashes</h1>
+
+ <a href="/">index</a>
+
+<canvas id="canvas" width="800" height="500">
+</canvas>
+
+
+
+<script>
+  // this will make the JavaScript engine much pickier about potential programming issues
+  'use strict';
+
+  // get the "drawing context" - the object that can actually draw on the canvas
+  var c = document.getElementById("canvas").getContext("2d");
+
+  // demonstrate joins
+  c.lineCap = "butt";
+  c.lineJoin = "miter";
+  c.lineWidth = 10;
+
+  c.beginPath();
+  c.moveTo(350, 10);
+  c.lineTo(600, 150);
+  c.lineTo(350, 150);
+  c.stroke();
+
+  c.beginPath();
+  c.moveTo(350, 320);
+  c.lineTo(600, 460);
+  c.stroke();
+
+  c.beginPath();
+  c.moveTo(600, 460);
+  c.lineTo(350, 460);
+  c.stroke();
+
+
+
+  // demonstrate dashes moving across joins
+  // set our drawing style
+  c.setLineDash([40,40]);
+
+  c.lineJoin = "round";
+  c.lineCap = "butt";
+  c.lineWidth = 10;
+
+  c.beginPath();
+  c.moveTo(10, 10);
+  c.lineTo(280, 10);
+  c.lineTo(280, 170);
+  c.stroke();
+
+  c.beginPath();
+  c.moveTo(10, 320);
+  c.lineTo(280, 320);
+  c.stroke();
+
+  c.beginPath();
+  c.moveTo(280, 320);
+  c.lineTo(280, 480);
+  c.stroke();
+
+
+</script>
