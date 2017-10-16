@@ -39,11 +39,11 @@
   'use strict';
 
   // add a click event handler on the canvas so we can tell the stick figure where to go
-  var canvas = document.getElementById("canvas");
+  const canvas = document.getElementById("canvas");
   canvas.addEventListener('click', addTarget);
 
   // get the "drawing context" - the object that can actually draw on the canvas
-  var c = canvas.getContext("2d");
+  const c = canvas.getContext("2d");
 
   // set our drawing style
   c.lineWidth = 3;
@@ -53,32 +53,32 @@
 
 
   // this counts how much we have walked already
-  var distanceWalked = 0;
+  let distanceWalked = 0;
 
   // the stick figure's current position on the canvas, initially random
-  var positionX = Math.floor(Math.random()*(canvas.width-100)+50);
-  var positionY = Math.floor(Math.random()*(canvas.height-120)+100);
+  let positionX = Math.floor(Math.random()*(canvas.width-100)+50);
+  let positionY = Math.floor(Math.random()*(canvas.height-120)+100);
 
   // this is a stable ID by which the server identifies us in the scores
   // this allows us to set our name at any point without losing the score
-  var playerID = "p" + positionX + "x" + positionY;
+  const playerID = "p" + positionX + "x" + positionY;
   byId('playerName').value = playerID;
 
   // this is a stable password that the server never publishes but remembers
   // so nobody can use the same playerID and force banning
-  var playerPassword = Math.random();
+  const playerPassword = Math.random();
 
   // the coordinates of targets clicked by the user
-  var targets = [];
+  let targets = [];
 
   // the coordinates of diamonds (see addDiamond below)
-  var diamonds = [];
+  let diamonds = [];
 
   // how many pixels the stick figure can walk per second
-  var speed = 50;
+  let speed = 50;
 
   // this variable controls when we're walking
-  var walking = false;
+  let walking = false;
 
   // draw the scene
   updateAndDrawCurrentState();
@@ -113,7 +113,7 @@
     });
 
     // get the nearest target to walk towards
-    var target = selectNearestTarget(positionX, positionY, targets);
+    let target = selectNearestTarget(positionX, positionY, targets);
 
     // only walk to diamonds if we don't have a clicked target
     if (target === null) target = selectNearestTarget(positionX, positionY, diamonds);
@@ -129,7 +129,7 @@
     }
 
     // compute how far we have walked since the last time we've been in this function
-    var walkedNow = speed * elapsedTime();
+    let walkedNow = speed * elapsedTime();
 
     if (walkedNow > target.distance) {
       walkedNow = target.distance; // don't walk past the target
@@ -143,7 +143,7 @@
 
     // compute the angle towards the target
     // note that direction here is in radians (full circle is 2π) and not in degrees as usual for us
-    var direction = 0;
+    let direction = 0;
     if (target.distance > 0.01) { // only face towards the target when we're some distance away from it
       direction = Math.acos((target.x-positionX)/target.distance);
       if ((target.y-positionY) < 0) direction = -direction;
@@ -174,7 +174,7 @@
   // when the user clicks, we put a target where the user clicked, and start walking
   function addTarget(event) {
     // replace the list of targets with only one at the click
-    var click = getClickCoordinates(event, canvas);
+    const click = getClickCoordinates(event, canvas);
     // 2 is the width of the border we've given our canvas
     targets = [{
       x: click.left-2,
@@ -189,9 +189,9 @@
   // this function computes the current distance of all the targets in the list and finds the nearest one
   // after this function finishes, the nearest target is list[0]
   function selectNearestTarget(x, y, list) {
-    var nearestTarget = null;
-    var nearestDistance = Infinity;
-    var nearestIndex = null;
+    let nearestTarget = null;
+    let nearestDistance = Infinity;
+    let nearestIndex = null;
 
     list.forEach(function (target, idx) {
       target.distance = Math.sqrt(Math.pow(target.x-x, 2) + Math.pow(target.y-y, 2));
@@ -204,7 +204,7 @@
 
     if (nearestTarget) {
       // put the nearestTarget as the first one in the list so it's easy to remove
-      var tmp = list[0];
+      const tmp = list[0];
       list[0] = list[nearestIndex];
       list[nearestIndex] = tmp;
     }
@@ -257,7 +257,7 @@
   //
 
   function loadDiamonds() {
-    var xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.onload = receivedDiamonds;
     xhr.onerror = function() { setTimeout(loadDiamonds, 1000) };
     xhr.open("get", '/api/diamonds/', true);
@@ -273,7 +273,7 @@
     }
 
     try {
-      var data = JSON.parse(this.responseText);
+      const data = JSON.parse(this.responseText);
     } catch (e) {
       setTimeout(loadDiamonds, 1000);
       return; // no diamonds received, retry in a second
@@ -286,7 +286,7 @@
   }
 
   function claimDiamond(diamond) {
-    var xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.open("delete", '/api/diamonds/' + diamond.id + '?user=' + playerID + '&pwd=' + playerPassword + '&name=' + byId('playerName').value, true);
     xhr.onload = diamondClaimReturned;
     xhr.send();
@@ -299,7 +299,7 @@
     if (this.status != 200) return; // someone else got this diamond
 
     // the diamond is ours!
-    var data = JSON.parse(this.responseText);
+    const data = JSON.parse(this.responseText);
     setScore(data.score);
   }
 

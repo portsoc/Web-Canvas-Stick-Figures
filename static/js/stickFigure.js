@@ -28,7 +28,7 @@
     function drawLimbs(c, x, y, distance) {
 
       // at rest, the legs are spread by 2*20 pixels (the front leg is 20 pixels in front, the back leg is 20 pixels behind)
-      var spread = 20;
+      let spread = 20;
 
       // if we have a distance parameter, we are moving (otherwise we are at rest)
       if (distance !== undefined) {
@@ -44,7 +44,7 @@
         if (distance < 0) distance = -distance;
 
         // compute where in a step we are
-        var thisStep = distance % 40;
+        const thisStep = distance % 40;
 
         spread = 20-thisStep;
       }
@@ -65,19 +65,19 @@
       if (facing > 180) return;  // facing away from us, don't draw a face
 
       // we'll fake the turning of the face by shifting the eyes and the smile by an offset of up to 10 pixels
-      var faceOffset = (facing-90)/9;
+      const faceOffset = (facing-90)/9;
 
       circle(c, x-7-faceOffset, y-5, 1);  // 7 is distance from center, 5 is how high the eyes are from the head's center, 1 is eye size
       circle(c, x+7-faceOffset, y-5, 1);
 
       // decrease the smile size here
-      var smileSize = 70; // size of smile in degrees of angle; 360 would be a full circle
-      var startAngle = rad(90-smileSize/2-2*faceOffset);
-      var endAngle   = rad(90+smileSize/2-2*faceOffset);
+      const smileSize = 70; // size of smile in degrees of angle; 360 would be a full circle
+      let startAngle = rad(90-smileSize/2-2*faceOffset);
+      let endAngle   = rad(90+smileSize/2-2*faceOffset);
       arc(c, x-faceOffset, y, 12, startAngle, endAngle); // 12 is the radius of the smile circle
 
       // now a moustache
-      var moSize = 70; // size of smile in degrees of angle; 360 would be a full circle
+      const moSize = 70; // size of smile in degrees of angle; 360 would be a full circle
       startAngle = rad(90-moSize/2);
       endAngle   = rad(90+moSize/2);
       arc(c, x-faceOffset-7, y-1, 8, startAngle-.17, endAngle-.17);

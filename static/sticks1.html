@@ -22,7 +22,7 @@
   'use strict';
 
   // get the "drawing context" - the object that can actually draw on the canvas
-  var c = document.getElementById("canvas").getContext("2d");
+  const c = document.getElementById("canvas").getContext("2d");
 
   // set our drawing style
   c.lineWidth = 3;
@@ -67,13 +67,13 @@
     circle(c, x+7, y-5, 1);
 
     // an arc for a smile
-    var smileSize = 70; // size of smile in degrees of angle; 360 would be a full circle
+    const smileSize = 70; // size of smile in degrees of angle; 360 would be a full circle
     arc(c, x, y, 12, rad(90-smileSize/2), rad(90+smileSize/2)); // 12 is the radius of the smile circle
 
     // // now a moustache
-    // var moSize = 70; // size of smile in degrees of angle; 360 would be a full circle
-    // var startAngle = rad(90-moSize/2);
-    // var endAngle   = rad(90+moSize/2);
+    // const moSize = 70; // size of smile in degrees of angle; 360 would be a full circle
+    // const startAngle = rad(90-moSize/2);
+    // const endAngle   = rad(90+moSize/2);
     // arc(c, x-7, y-2, 8, startAngle-.17, endAngle-.17);
     // arc(c, x+7, y-2, 8, startAngle+.17, endAngle+.17);
     //

@@ -27,11 +27,11 @@
   'use strict';
 
   // add a click event handler on the canvas so we can tell the stick figure where to go
-  var canvas = document.getElementById("canvas");
+  const canvas = document.getElementById("canvas");
   canvas.addEventListener('click', setNewTarget);
 
   // get the "drawing context" - the object that can actually draw on the canvas
-  var c = canvas.getContext("2d");
+  const c = canvas.getContext("2d");
 
   // set our drawing style
   c.lineWidth = 3;
@@ -40,22 +40,22 @@
   c.strokeStyle = "#000";
 
   // this counts how much we have walked already
-  var distanceWalked = 0;
+  let distanceWalked = 0;
 
   // the stick figure's current position on the canvas
-  var positionX = 100;
-  var positionY = 300;
+  let positionX = 100;
+  let positionY = 150;
 
   // the coordinates where the user wants the stick figure to go
   // initially it's where the stick figure is
-  var targetX = positionX;
-  var targetY = positionY;
+  let targetX = positionX;
+  let targetY = positionY;
 
   // how many pixels the stick figure can walk per second
-  var speed = 50;
+  let speed = 50;
 
   // this variable controls when we're walking
-  var walking = false;
+  let walking = false;
 
   // draw the scene
   updateAndDrawCurrentState();
@@ -86,7 +86,7 @@
     line(c, targetX, targetY-10, targetX, targetY+10);
 
     // compute distance of stick figure from the target
-    var distance = Math.sqrt(Math.pow(targetX-positionX, 2) + Math.pow(targetY-positionY, 2));
+    const distance = Math.sqrt(Math.pow(targetX-positionX, 2) + Math.pow(targetY-positionY, 2));
 
     if (distance<1) {
       // we are at target, no need to walk any further
@@ -99,13 +99,13 @@
     }
 
     // compute how far we have walked since the last time we've been in this function
-    var walkedNow = speed * elapsedTime();
+    let walkedNow = speed * elapsedTime();
 
     if (walkedNow > distance) walkedNow = distance; // don't walk past the target
 
     // compute the angle towards the target
     // note that direction here is in radians (full circle is 2π) and not in degrees as usual for us
-    var direction = Math.acos((targetX-positionX)/distance);
+    let direction = Math.acos((targetX-positionX)/distance);
     if ((targetY-positionY) < 0) direction = -direction;
 
     // take the next step
@@ -126,7 +126,7 @@
 
   // when the user clicks, we set the target to where the user clicked, and start walking there
   function setNewTarget(event) {
-    var click = getClickCoordinates(event, canvas);
+    const click = getClickCoordinates(event, canvas);
     // 2 is the width of the border we've given our canvas
     targetX = click.left-2;
     targetY = click.top-2;

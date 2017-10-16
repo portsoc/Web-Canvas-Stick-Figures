@@ -21,7 +21,7 @@
   'use strict';
 
   // get the "drawing context" - the object that can actually draw on the canvas
-  var c = document.getElementById("canvas").getContext("2d");
+  const c = document.getElementById("canvas").getContext("2d");
 
   // set our drawing style
   c.lineWidth = 3;
@@ -30,10 +30,10 @@
   c.strokeStyle = "#000";
 
   // draw a circle of stick figures, facing inwards
-  for (var angle=0; angle<360; angle+=30) {
+  for (let angle=0; angle<360; angle+=30) {
     // it will actually be an ellipse, with center at 400,300; horizontal radius of 300, and vertial radius of 150
-    var x = 400 + 300*Math.cos(rad(angle));
-    var y = 300 + 150*Math.sin(rad(angle));
+    const x = 400 + 300*Math.cos(rad(angle));
+    const y = 300 + 150*Math.sin(rad(angle));
 
     // notice the last parameter:
     // the angle variable points from the centre of the circle of stick figures out,
@@ -80,18 +80,18 @@
     if (facing > 180) return;  // facing away from us, don't draw a face, try to comment this line out and see what happens
 
     // we'll fake the turning of the face by shifting the eyes and the smile by an offset of up to 10 pixels
-    var faceOffset = (facing-90)/9;
+    const faceOffset = (facing-90)/9;
 
     circle(c, x-7-faceOffset, y-5, 1);  // 7 is distance from center, 5 is how high the eyes are from the head's center, 1 is eye size
     circle(c, x+7-faceOffset, y-5, 1);
 
-    var smileSize = 70; // size of smile in degrees of angle; 360 would be a full circle
-    var startAngle = rad(90-smileSize/2-2*faceOffset);
-    var endAngle   = rad(90+smileSize/2-2*faceOffset);
+    const smileSize = 70; // size of smile in degrees of angle; 360 would be a full circle
+    let startAngle = rad(90-smileSize/2-2*faceOffset);
+    let endAngle   = rad(90+smileSize/2-2*faceOffset);
     arc(c, x-faceOffset, y, 12, startAngle, endAngle); // 12 is the radius of the smile circle
 
     // now the moustache
-    var moSize = 70; // size of smile in degrees of angle; 360 would be a full circle
+    const moSize = 70; // size of smile in degrees of angle; 360 would be a full circle
     startAngle = rad(90-moSize/2);
     endAngle   = rad(90+moSize/2);
     arc(c, x-faceOffset-7, y-1, 8, startAngle-.17, endAngle-.17);

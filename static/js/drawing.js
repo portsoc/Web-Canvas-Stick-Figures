@@ -54,19 +54,22 @@ function deg(x) {
 // this function computes the coordinates of a given mouse event in the element
 // it returns an object like {left: 100, top: 312}
 function getClickCoordinates(event, element) {
-  var rect = element.getBoundingClientRect();
+  const rect = element.getBoundingClientRect();
 
-  return { left: event.clientX - rect.left, top: event.clientY - rect.top };
+  return {
+    left: event.clientX - rect.left,
+    top: event.clientY - rect.top,
+  };
 }
 
 
 // this function measures time elapsed between subsequent invocations, in seconds (or fractions of a second)
 // this is useful for smooth animations
-var lastTime = null;
+let lastTime = null;
 function elapsedTime() {
   if (!lastTime) lastTime = Date.now();
-  var currentTime = Date.now();
-  var timeElapsed = currentTime - lastTime;
+  const currentTime = Date.now();
+  const timeElapsed = currentTime - lastTime;
   lastTime = currentTime;
   return timeElapsed/1000;
 }

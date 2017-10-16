@@ -29,7 +29,7 @@
   'use strict';
 
   // get the "drawing context" - the object that can actually draw on the canvas
-  var c = document.getElementById("canvas").getContext("2d");
+  const c = document.getElementById("canvas").getContext("2d");
 
   // set our drawing style
   c.lineWidth = 3;
@@ -38,31 +38,31 @@
   c.strokeStyle = "#000";
 
   // the stick figure will walk on a horizontal path from x=100 to x=700
-  var pathStart = 100;
-  var pathEnd = 700;
+  const pathStart = 100;
+  const pathEnd = 700;
 
   // this counts how much we have walked already
-  var distanceWalked = 0;
+  let distanceWalked = 0;
 
   // the walking stick man's current position along the path
-  var position = pathStart;
+  let position = pathStart;
 
   // are we going along the path (1) or backwards (-1)
-  var direction = 1;
+  let direction = 1;
 
   // how many pixels the stick figure can walk per second
-  var speed = 50;
+  let speed = 50;
 
   // whether or not we're currently walking
-  var walking = false;
+  let walking = false;
 
   // draw the scene
   drawEverything(c);
   startStopWalking();
 
-  // alternatively, comment out every "requestAnimationFrame" line and uncomment the two lines below
+  // alternatively, comment out the "requestAnimationFrame" line and uncomment the two lines below
   // here, we tell the browser to update the current state (and re-draw) framesPerSecond times every second (1000 ms)
-  // var framesPerSecond = 12;
+  // const framesPerSecond = 12;
   // setInterval(updateCurrentState, 1000/framesPerSecond)
 
 
@@ -81,7 +81,7 @@
     if (!walking) return;
 
     // compute how far we have walked since the last time we've been in this function
-    var walkedNow = speed * elapsedTime();
+    const walkedNow = speed * elapsedTime();
     position = position + direction * walkedNow;
 
     // at the end of the path, we turn around

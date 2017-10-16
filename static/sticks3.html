@@ -22,7 +22,7 @@
   'use strict';
 
   // get the "drawing context" - the object that can actually draw on the canvas
-  var c = document.getElementById("canvas").getContext("2d");
+  const c = document.getElementById("canvas").getContext("2d");
 
   // set our drawing style
   c.lineWidth = 3;
@@ -31,13 +31,13 @@
   c.strokeStyle = "#000";
 
   // the stick figure will walk on a horizontal path from x=100 to x=700
-  var pathStart = 100;
-  var pathLength = 600;
+  const pathStart = 100;
+  const pathLength = 600;
 
   // the stick figure functions are now in stickFigure.js because they are reused in subsequent files
 
   // draw a stick figure in various stages of a stride
-  for (var x=0; x<= pathLength; x+=85) { // 85 is a comfortable distance between stick figures walking in a line
+  for (let x=0; x<= pathLength; x+=85) { // 85 is a comfortable distance between stick figures walking in a line
     // notice the last two parameters:
     // 0 is the angle the stick figure is facing (reminder: 0 means to the right)
     // x is the distance traveled so the stick figure's limbs can be shown mid-stride
