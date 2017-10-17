@@ -14,7 +14,7 @@
 
 <a href="/">index</a>
 
-<canvas id="hili" width="100" height="100"></canvas>
+<canvas id="hili" width="400" height="400"></canvas>
 
 <p>This example uses a canvas under the page on which we can draw word highlights. Every <span class=c>&lt;span class=c&gt;</span> element, forced not to wrap to a next line, is highlighted, and connected by a line to the next one.</p>
 
@@ -67,10 +67,10 @@
       // draw an ellipse under the word to highlight it, padding it a bit
       ell(c, elCX, elCY, elW/2+10, elH/2+5);
 
-      if (lastCX != null) {
-        // draw a line from the previous word to the current one
-        line(c, lastCX, lastCY, elCX, elCY);
-      }
+      // if (lastCX != null) {
+      //   // draw a line from the previous word to the current one
+      //   line(c, lastCX, lastCY, elCX, elCY);
+      // }
 
       lastCX = elCX;
       lastCY = elCY;
