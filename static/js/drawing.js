@@ -15,7 +15,7 @@ function line(c, x1, y1, x2, y2) {
 function circle(c, x, y, r) {
   c.beginPath();
   c.fillStyle="#fff";
-  c.arc(x, y, r, 0, 6.3, false); // 6.3 is bigger than 2π so the arc will be a whole circle
+  c.arc(x, y, r, 0, 2 * Math.PI, false);
   c.fill();
   c.stroke();
 }
@@ -34,7 +34,7 @@ function ell(c, x, y, rx, ry) {
   c.beginPath();
   c.save();
   c.scale(1, d);
-  c.arc(x, y/d, rx, 0, 6.3, false);
+  c.arc(x, y/d, rx, 0, 2 * Math.PI, false);
   c.restore();
   c.fill();
 }
