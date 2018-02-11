@@ -29,7 +29,7 @@
   'use strict';
 
   // get the "drawing context" - the object that can actually draw on the canvas
-  var c = document.getElementById("canvas").getContext("2d");
+  const c = document.getElementById("canvas").getContext("2d");
 
   // demonstrate joins
   c.lineCap = "butt";
@@ -58,7 +58,7 @@
   // set our drawing style
   c.setLineDash([40,40]);
 
-  c.lineJoin = "round";
+  c.lineJoin = "miter";
   c.lineCap = "butt";
   c.lineWidth = 10;
 
