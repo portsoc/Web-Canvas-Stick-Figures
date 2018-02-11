@@ -276,11 +276,11 @@
 
     try {
       const data = JSON.parse(this.responseText);
+      if (Array.isArray(data)) diamonds = data;
     } catch (e) {
       setTimeout(loadDiamonds, 1000);
       return; // no diamonds received, retry in a second
     }
-    if (Array.isArray(data)) diamonds = data;
     startWalking();
 
     // immediately load diamonds again, the server promises to reply only when something changes
