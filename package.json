@@ -1,17 +1,21 @@
 {
-    "name": "WebF1-stick-figure-diamond-hunt",
-    "description": "a simple example drawing stick figures on an HTML5 canvas, and hunting diamonds with a simple server",
-    "version": "0.0.1",
-    "private": true,
-    "dependencies": {
-      "express": "4.x",
-      "body-parser": "1.x.x"
-    },
-    "jshintConfig": {
-        "asi": true,
-        "multistr": true
-    },
-    "scripts": {
-      "start": "node server"
-    }
+  "name": "WebF1-stick-figure-diamond-hunt",
+  "description": "a simple example drawing stick figures on an HTML5 canvas, and hunting diamonds with a simple server",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "4.x",
+    "body-parser": "1.x.x"
+  },
+  "devDependencies": {
+    "eslint": "^4.12.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.5.1",
+    "nodemon": "^1.12.1"
+  },
+  "scripts": {
+    "start": "node server"
+  }
 }

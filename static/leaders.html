@@ -33,63 +33,44 @@
 
 <script>
   'use strict';
-  document.body.onload = function() {
-    loadLeaders()
-  }
-
+  window.addEventListener('load', loadLeaders);
 
   function cleanLeaders() {
     var leadersEl = byId('leaders');
     leadersEl.innerHTML = '';
-    // var oldLeaders = array(leadersEl.querySelectorAll('li'));
-    //
-    // oldLeaders.forEach(function(el) {
-    //     leadersEl.removeChild(el);
-    // });
   }
 
-  var oldLoad = null;
-
-  function loadLeaders() {
-    if (oldLoad) return;
-    var xhr = new XMLHttpRequest();
-    xhr.onload = populateLeaders;
-    xhr.onerror = function() {
-        console.error("error loading leaders");
-        setTimeout(loadLeaders, 1000)
+  async function loadLeaders() {
+    const response = await fetch('/api/scores/');
+    if (!response.ok) {
+      console.error("error loading leaders");
+      setTimeout(loadLeaders, 1000);
+      return;
     }
-    xhr.open("get", '/api/scores/', true);
-    xhr.send();
-
-    oldLoad = xhr
+    populateLeaders(await response.json());
+    setTimeout(loadLeaders, 1000);
   }
 
   // partly generated with paletton.com
   var playerColors = [ "#EFCAD1", "#F38298", "#F4AEBB", "#D3B5BB", "#B59A9F",
     "#FFF7D7", "#FFE889", "#FFF0B5", "#E3DCC2", "#C3BDA6", "#A4A0B9", "#8476C7",
     "#A49BCF", "#8C899D", "#787587", "#C9E0BD", "#9EE67C", "#BCEAA6", "#B1C4A8",
-    "#97A88F", "#ffffff", "#ffff00", "#ff00ff", "#00ffff", "#ff8888", "#88ff88", "#8888ff" ]
+    "#97A88F", "#ffffff", "#ffff00", "#ff00ff", "#00ffff", "#ff8888", "#88ff88", "#8888ff" ];
 
 
-  function populateLeaders() {
-    setTimeout(loadLeaders, 1000)
+  function populateLeaders(data) {
     cleanLeaders();
-    oldLoad = null
 
-    if (this.status >= 300) return;
-
-    var data = JSON.parse(this.responseText);
-
-    var scores = []
+    var scores = [];
 
     for (var playerId in data) {
-      data[playerId].id = playerId
-      scores.push(data[playerId])
+      data[playerId].id = playerId;
+      scores.push(data[playerId]);
     }
 
-    scores.sort(function (a,b) {
+    scores.sort((a,b) => {
       return b.score - a.score;
-    })
+    });
 
     for (var scoreId in scores) {
       var player = scores[scoreId];
@@ -103,7 +84,7 @@
       for (var i=0; i<player.id.length; i++) {
         colorHash = colorHash*17 + player.id.charCodeAt(i);
       }
-      findEl(playerFragment, 'li').style.background = playerColors[colorHash % playerColors.length]
+      findEl(playerFragment, 'li').style.background = playerColors[colorHash % playerColors.length];
 
       byId('leaders').appendChild(playerFragment);
     }

@@ -258,51 +258,39 @@
   //
   //
 
-  function loadDiamonds() {
-    const xhr = new XMLHttpRequest();
-    xhr.onload = receivedDiamonds;
-    xhr.onerror = function() { setTimeout(loadDiamonds, 1000) };
-    xhr.open("get", '/api/diamonds/', true);
-    xhr.send();
+  async function loadDiamonds() {
+    try {
+      // asynchronously load current diamonds
+      const response = await fetch('/api/diamonds/');
+      // get the response data
+      const data = await response.json();
+      if (Array.isArray(data)) diamonds = data;
+      startWalking();
+
+      // immediately start loading diamonds again, the server promises to reply only when something changes
+      loadDiamonds();
+    } catch (e) {
+      setTimeout(loadDiamonds, 1000);
+    }
   }
 
   loadDiamonds();
 
-  function receivedDiamonds() {
-    if (this.status >= 300) {
-      setTimeout(loadDiamonds, 1000);
-      return; // no diamonds received, retry in a second
-    }
-
-    try {
-      const data = JSON.parse(this.responseText);
-      if (Array.isArray(data)) diamonds = data;
-    } catch (e) {
-      setTimeout(loadDiamonds, 1000);
-      return; // no diamonds received, retry in a second
-    }
-    startWalking();
-
-    // immediately load diamonds again, the server promises to reply only when something changes
-    loadDiamonds();
-  }
-
-  function claimDiamond(diamond) {
-    const xhr = new XMLHttpRequest();
-    xhr.open("delete", '/api/diamonds/' + diamond.id + '?user=' + playerID + '&pwd=' + playerPassword + '&name=' + byId('playerName').value, true);
-    xhr.onload = diamondClaimReturned;
-    xhr.send();
+  async function claimDiamond(diamond) {
     stopWalking();
+    const response = await fetch(
+      '/api/diamonds/' + diamond.id + '?user=' + playerID + '&pwd=' + playerPassword + '&name=' + byId('playerName').value,
+      { method: 'delete' }
+    );
+
+    if (response.ok) {
+      // the diamond is ours!
+      const data = await response.json();
+      setScore(data.score);
+    }
+
     // on success, the server will update our score
-  }
-
-  function diamondClaimReturned() {
     startWalking();
-    if (this.status != 200) return; // someone else got this diamond
-
-    // the diamond is ours!
-    const data = JSON.parse(this.responseText);
-    setScore(data.score);
   }
 
 </script>

@@ -1,0 +1,35 @@
+extends: airbnb
+
+env:
+  node: true
+  browser: false
+
+parserOptions:
+  ecmaVersion: 8
+
+rules:
+  no-console: off
+  strict: off
+  func-names: off
+  prefer-template: off
+  new-cap: off
+  no-use-before-define: off
+  no-param-reassign: off
+  prefer-rest-params: off
+  no-trailing-spaces: off
+  arrow-body-style: off
+  key-spacing: off
+  max-len:
+    - "error"
+    - 120
+    - ignoreTrailingComments: true
+  space-infix-ops: off
+  no-restricted-syntax: off
+  prefer-destructuring: off
+  arrow-parens: off
+  import/no-dynamic-require: off
+  no-multi-spaces: off
+  no-shadow: off
+  prefer-promise-reject-errors: off
+  no-throw-literal: off
+  no-mixed-operators: off

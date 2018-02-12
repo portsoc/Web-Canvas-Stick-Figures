@@ -5,19 +5,21 @@
 // draw a line on canvas context `c`, from point x1,y1 to point x2,y2
 function line(c, x1, y1, x2, y2) {
   c.beginPath();
-  c.moveTo(x1,y1);
-  c.lineTo(x2,y2);
+  c.moveTo(x1, y1);
+  c.lineTo(x2, y2);
   c.stroke();
 }
 
 // draw a circle on canvas context `c`, centered on x,y, with radius r
 // also fill the circle with white (so it's not transparent)
 function circle(c, x, y, r) {
+  c.save(); // we're changing fillStyle so we need to be able to restore it
   c.beginPath();
-  c.fillStyle="#fff";
+  c.fillStyle='#fff';
   c.arc(x, y, r, 0, 2 * Math.PI, false);
   c.fill();
   c.stroke();
+  c.restore(); // restore previous fill style
 }
 
 
@@ -29,13 +31,9 @@ function arc(c, x, y, r, angleStart, angleEnd) {
 }
 
 // fill an ellipse on canvas context `c`, centered on x,y, with horizontal radius rx, vertical radius ry
-function ell(c, x, y, rx, ry) {
-  const d=ry/rx; // draw the ellipse as a squashed circle
+function fillEll(c, x, y, rx, ry) {
   c.beginPath();
-  c.save();
-  c.scale(1, d);
-  c.arc(x, y/d, rx, 0, 2 * Math.PI, false);
-  c.restore();
+  c.ellipse(x, y, rx, ry, 0, 0, 2 * Math.PI, false);
   c.fill();
 }
 
@@ -73,3 +71,12 @@ function elapsedTime() {
   lastTime = currentTime;
   return timeElapsed/1000;
 }
+
+window.line = line;
+window.circle = circle;
+window.arc = arc;
+window.fillEll = fillEll;
+window.rad = rad;
+window.deg = deg;
+window.getClickCoordinates = getClickCoordinates;
+window.elapsedTime = elapsedTime;
