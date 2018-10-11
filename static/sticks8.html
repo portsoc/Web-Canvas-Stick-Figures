@@ -64,7 +64,15 @@
   // this is a stable ID by which the server identifies us in the scores
   // this allows us to set our name at any point without losing the score
   const playerID = "p" + positionX + "x" + positionY;
-  byId('playerName').value = playerID;
+
+  // set player name to a previously remembered name or to the player ID
+  const playerNameEl = byId('playerName');
+  playerNameEl.value = localStorage.playerName || playerID;
+
+  // remember the new name when the user changes it
+  playerNameEl.addEventListener('input', () => {
+    localStorage.playerName = playerNameEl.value;
+  });
 
   // this is a stable password that the server never publishes but remembers
   // so nobody can use the same playerID and force banning
@@ -279,7 +287,7 @@
   async function claimDiamond(diamond) {
     stopWalking();
     const response = await fetch(
-      '/api/diamonds/' + diamond.id + '?user=' + playerID + '&pwd=' + playerPassword + '&name=' + byId('playerName').value,
+      '/api/diamonds/' + diamond.id + '?user=' + playerID + '&pwd=' + playerPassword + '&name=' + playerNameEl.value,
       { method: 'delete' }
     );
 
