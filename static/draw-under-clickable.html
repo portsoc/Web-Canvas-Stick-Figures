@@ -146,22 +146,18 @@ canvas, article {
    */
 function prep() {
   // find every 
-  let nodes = document.querySelector('article').childNodes;
-  for (const node of nodes ) {
+  const art = document.querySelector('article');
+  for (const node of art.childNodes ) {
     console.log(node.textContent);
     console.log(markup(node.textContent));
     node.innerHTML = markup(node.textContent);
   }
 
-  // attach an event listener to every span
-  // this could be on article!
-  let spans = document.querySelectorAll('span');
-  for (const span of spans) {
-    span.addEventListener("click", (e) => {
-      e.currentTarget.classList.toggle("c");
-      draw();
-    });
-  }
+  art.addEventListener("click", (e) => {
+    console.log(e.target)
+    e.target.classList.toggle("c");
+    draw();
+  });
 
   draw();
 }
