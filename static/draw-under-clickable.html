@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<title>drawing under text</title>
+
+<style>
+  canvas { position: fixed; top: 0; left: 0; z-index: -1; }
+  span.c { display: inline-block; font-weight: bold;/* prevent wrapping */ }
+  p { min-width: 30em; }
+
+canvas, article {
+  transition: transform 2s ease-in-out;
+}
+
+.perspective canvas {
+  transform:
+    perspective(1500px)
+    translateX(-100px)
+    rotateY(45deg)
+    scale(.7);
+}
+
+.perspective article {
+  transform:
+    perspective(1500px)
+    translateX(100px)
+    rotateY(45deg)
+    scale(.9);
+}
+
+
+</style>
+<script src="js/drawing.js"></script>
+<script src="js/stickFigure.js"></script>
+
+<h1>drawing under text with canvas</h1>
+
+<nav>
+  <a href="/">index</a>
+</nav>
+
+<canvas id="hili" width="400" height="400"></canvas>
+
+<article>
+<p>This example uses a canvas under the page on which we can draw word highlights. Every word has been wrapped in a span.  Every span can be clicked, and then that happens the element classlist is toggled, and the underlying canvas redrawn.
+
+<p>Press P to see a perspective view, that highlights the separation.</p>
+
+<p>The rest is lorem ipsum, so it can be ingored.</p>
+
+<p>Lorem ipsum dolor sit amet, nec elit laoreet are you still reading?  You are not easily duped.  You should consider a career with the government.  Any government will do.  Choose one at random with a game of pin the tail on the donkey, except use a map, not a donkey, and a click instead of a pin, because nobody uses paper maps any more.  Except maybe octogenarians, because old. Aliquam erat volutpat.</p>
+
+<p>Fusce bibendum tellus dui. Nam massa tortor, tincidunt vitae orci sit amet, mollis porttitor libero. In nec elit laoreet, condimentum mi quis, ultricies turpis. Nulla facilisi. Duis sed dui vitae nisl eleifend dapibus. Vestibulum erat leo, condimentum sit amet nunc in, luctus dignissim mi. Pellentesque in tempor ligula, id tristique dui. Aenean ut turpis vel leo molestie rutrum eu ac felis. Vestibulum lacinia tincidunt euismod. Nunc imperdiet nisl et gravida rutrum. Nunc tristique turpis non faucibus rhoncus. Maecenas sed justo pellentesque, bibendum ex id, blandit erat. Maecenas molestie dictum consectetur.</p>
+</article>
+<!-- use a normal text with "this is a secret message" ? -->
+
+<script>
+
+  'use strict';
+  window.addEventListener('load', prep);   // initial draw
+  window.addEventListener('scroll', draw); // if we move the page we need to redraw because the canvas doesn't move
+  window.addEventListener('resize', draw); // if we resize the page, it may reflow so we must redraw
+
+  function draw() {
+    // set the canvas size to the window size (this also clears it)
+    window.hili.width = window.innerWidth;
+    window.hili.height = window.innerHeight;
+
+    // get the context
+    const c = window.hili.getContext("2d");
+
+    // set the drawing style
+    c.lineWidth = 4;
+    c.strokeStyle = "#f00";
+    c.fillStyle = "#ff0";
+    c.lineCap = "round";
+
+    let lastCX, lastCY;
+
+    const words = document.querySelectorAll('span.c');
+    for (let el of words) {
+
+      // find dimentions of the element
+      const elTop = offY(el) - window.scrollY;
+      const elLeft = offX(el) - window.scrollX;
+      const elW = el.offsetWidth;
+      const elH = el.offsetHeight;
+      const elCX = elLeft + elW/2;
+      const elCY = elTop + elH/2;
+
+      // draw an ellipse under the word to highlight it, padding it a bit
+      fillEll(c, elCX, elCY, elW/2+10, elH/2+5);
+
+      if (lastCX != null) {
+        // draw a line from the previous word to the current one
+        line(c, lastCX, lastCY, elCX, elCY);
+      }
+
+      lastCX = elCX;
+      lastCY = elCY;
+    }
+  }
+
+  // positions of a given element in a given root element
+  function offX(el, root) {
+    if (el === null || el === root) return 0;
+    return el.offsetLeft + offX(el.offsetParent, root);
+  }
+  function offY(el, root) {
+    if (el === null || el === root) return 0;
+    return el.offsetTop + offY(el.offsetParent, root);
+  }
+
+
+
+  /**
+   * Pressing P will toggle perspective on and off
+   */
+  document.addEventListener("keyup", (e) => {
+    if (e.code == "KeyP") {
+      document.body.classList.toggle("perspective");
+    }
+  });
+
+  /**
+   * A reducer function to add a span around text and
+   * append that to a string that's being built
+   */
+  function addSpan(curr, txt) {
+    return curr + "<span>"+txt+"</span> ";
+  }
+
+  /**
+   * A utility function that takes a stting and wraps
+   * every word in a span.
+   */
+  function markup(txt) {
+    return txt.split(" ").reduce(addSpan, "");
+  }
+
+  /**
+   * A preparation function that finds all textContent
+   * within and article and adds a span to every word
+   * then adds an event listent to every span, so that
+   * when spans are clicked, words and highlighted and
+   * joined.
+   */
+function prep() {
+  // find every 
+  let nodes = document.querySelector('article').childNodes;
+  for (const node of nodes ) {
+    console.log(node.textContent);
+    console.log(markup(node.textContent));
+    node.innerHTML = markup(node.textContent);
+  }
+
+  // attach an event listener to every span
+  // this could be on article!
+  let spans = document.querySelectorAll('span');
+  for (const span of spans) {
+    span.addEventListener("click", (e) => {
+      e.currentTarget.classList.toggle("c");
+      draw();
+    });
+  }
+
+  draw();
+}
+
+</script>
+
+</html>
