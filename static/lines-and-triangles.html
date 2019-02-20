@@ -17,7 +17,7 @@
 <h1>Drawing on Canvas</h1>
 
 <nav>
-  <span style="color: #888">previous</span> | <a href="/">index</a> | <a href="sticks1.html">next</a>
+  <a href="/">index</a>
 </nav>
 
 <canvas id="canvas" width="800" height="500">
@@ -33,14 +33,11 @@
   const c = document.getElementById("canvas").getContext("2d");
 
   // set our drawing style
-  c.lineWidth = 3;
+  c.lineWidth = 15;
   c.strokeStyle = "red";
   c.fillStyle = "#0ff";
 
-  c.lineCap = "round";   // or butt or square
-  c.lineJoin = "round";  // or bevel or miter
-
-  // c.setLineDash([20,20]); // works best with lineCap butt
+  // c.setLineDash([40,30]); // works best with lineCap butt
 
   // draw a line
   // c.beginPath();
@@ -48,20 +45,27 @@
   // c.lineTo(400, 200);
   // c.stroke();
 
-  // draw a circle
-  // c.fillStyle="white";
-  // c.strokeStyle = "green";
+  // draw a triangle from three lines
   // c.beginPath();
-  // c.arc(400, 150, 100, 0, 2 * Math.PI, false);
-  // c.fill();
+  // c.moveTo(200, 450);
+  // c.lineTo(400, 150);
+  // c.stroke();
+  // c.beginPath();
+  // c.moveTo(400, 150);
+  // c.lineTo(600, 450);
+  // c.stroke();
+  // c.beginPath();
+  // c.moveTo(600, 450);
+  // c.lineTo(200, 450);
   // c.stroke();
 
-  // exercise for you:
-  // change the arc to 200,100,60
-  // draw a line to 200,160 -> 200,320
-  // draw another 200,320 -> 250,480
-  // draw another 200,320 -> 150,480
-  // draw another 200,160 -> 250,320
-  // draw another 200,160 -> 150,320
-  // then remove most of the beginPaths and strokes
+  // then try dashed
+
+  // draw a triangle
+  // c.beginPath();
+  // c.moveTo(200, 450);
+  // c.lineTo(400, 150);
+  // c.lineTo(600, 450);
+  // c.closePath();
+  // c.stroke();
 </script>
