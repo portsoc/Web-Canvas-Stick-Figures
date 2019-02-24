@@ -49,6 +49,21 @@ function deg(x) {
 }
 
 
+// scales the canvas so it matches the window pixel density
+// returns a drawing context that is scaled too so the new canvas dimensions can be ignored
+function scaleCanvas(canvasEl) {
+  const dpr = window.devicePixelRatio || 1;
+  canvasEl.style.width = `${canvasEl.width}px`;
+  canvasEl.style.height = `${canvasEl.height}px`;
+  canvasEl.width *= dpr;
+  canvasEl.height *= dpr;
+
+  const c = canvasEl.getContext('2d');
+  c.scale(dpr, dpr);
+  return c;
+}
+
+
 // this function computes the coordinates of a given mouse event in the element
 // it returns an object like {left: 100, top: 312}
 function getClickCoordinates(event, element) {
@@ -78,5 +93,6 @@ window.arc = arc;
 window.fillEll = fillEll;
 window.rad = rad;
 window.deg = deg;
+window.scaleCanvas = scaleCanvas;
 window.getClickCoordinates = getClickCoordinates;
 window.elapsedTime = elapsedTime;
