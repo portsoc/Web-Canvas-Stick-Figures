@@ -22,7 +22,7 @@
 
 <canvas id="canvas" width="800" height="400"></canvas>
 
-<button id="startstop" onclick="startStopWalking()">Start/Stop</button>
+<button id="startstop" onclick="startStopWalking()">Start walking</button>
 
 <div class="parameter">Speed: <input type="range" id="slider" oninput="setSpeed(this.value);"></div>
 
@@ -42,28 +42,18 @@
   c.lineJoin = "round";
   c.strokeStyle = "#000";
 
-  // the stick figure will walk on a horizontal path from x=100 to x=700
-  const pathStart = 100;
-  const pathEnd = 700;
-
-  // this counts how much we have walked already
-  let distanceWalked = 0;
-
-  // the walking stick man's current position along the path
-  let position = pathStart;
-
-  // are we going along the path (1) or backwards (-1)
-  let direction = 1;
-
-  // how many pixels the stick figure can walk per second
-  let speed = 50;
-
-  // whether or not we're currently walking
-  let walking = false;
+  const state = {
+    x0: 100,
+    y0: 350,
+    pathLength: 600,
+    position: 0,
+    direction: 1, // 1 is along the path, -1 is backwards
+    speed: 50, // pixels per second
+    walking: false, // whether or not we're currently walking
+  }
 
   // draw the scene
   drawEverything(c);
-  startStopWalking();
 
   // alternatively, comment out the "requestAnimationFrame" line and uncomment the two lines below
   // here, we tell the browser to update the current state (and re-draw) framesPerSecond times every second (1000 ms)
@@ -73,39 +63,36 @@
 
   function drawEverything(c) {
     // clear the canvas - we'll redraw everything
-    c.clearRect(0,0,800,400);
+    c.clearRect(0,0,c.canvas.width,c.canvas.height);
 
     // grass helps us see how the legs move
-    grass(c, 360);
+    grass(c, state.y0 + 10);
 
     // this is our walking stick figure
-    drawStickFigure(c, position, 350, (1-direction)*90, distanceWalked);
+    drawStickFigure(c, state.x0 + state.position, state.y0, (1-state.direction)*90, state.position);
 
     // this is a watching stick figure
-    drawStickFigure(c, 400, 180, 180*(pathEnd - position)/(pathEnd - pathStart));
+    drawStickFigure(c, 400, 200, 180 - 180 * state.position / state.pathLength);
   }
 
   function updateCurrentState() {
-    if (!walking) return;
+    if (!state.walking) return;
 
     // compute how far we have walked since the last time we've been in this function
-    const walkedNow = speed * elapsedTime();
-    position = position + direction * walkedNow;
+    const walkedNow = state.speed * elapsedTime();
+    state.position = state.position + state.direction * walkedNow;
 
     // at the end of the path, we turn around
-    if (position > pathEnd) {
-      direction = -1;
-      position = pathEnd - (position - pathEnd);
+    if (state.position > state.pathLength) {
+      state.direction = -1;
+      state.position = state.pathLength - (state.position - state.pathLength);
     }
 
     // at the beginning of the path, we turn around
-    if (position < pathStart) {
-      direction = 1;
-      position = pathStart + (pathStart - position);
+    if (state.position < 0) {
+      state.direction = 1;
+      state.position = -state.position;
     }
-
-    // update the distance walked so the stride matches
-    distanceWalked += walkedNow;
 
     drawEverything(c);
 
@@ -114,25 +101,20 @@
   }
 
   function startStopWalking() {
-    walking = !walking;
+    state.walking = !state.walking;
     // reset timer - ignore the time that has passed since last something happened
     elapsedTime();
 
     // start drawing again if we started walking
-    if (walking) updateCurrentState();
+    if (state.walking) updateCurrentState();
 
     // update the text of the button
-    byId("startstop").textContent = walking ? "Stop walking" : "Start walking";
+    document.querySelector("#startstop").textContent = state.walking ? "Stop walking" : "Start walking";
 
     return true;
   }
 
   function setSpeed(val) {
-    speed = val;
-  }
-
-  // helpful function for finding elements in the document
-  function byId(id) {
-      return document.getElementById(id);
+    state.speed = val;
   }
 </script>
