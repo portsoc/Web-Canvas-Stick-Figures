@@ -24,10 +24,7 @@
   'use strict';
 
   // get the "drawing context" - the object that can actually draw on the canvas
-  // const c = document.getElementById("canvas").getContext("2d");
-
-  // try this instead for a scaled canvas
-  const c = scaleCanvas(document.getElementById('canvas'));
+  const c = document.getElementById("canvas").getContext("2d");
 
   // set our drawing style
   c.lineWidth = 3;
