@@ -33,7 +33,10 @@
   canvas.addEventListener('click', setNewTarget);
 
   // get the "drawing context" - the object that can actually draw on the canvas
-  const c = canvas.getContext("2d");
+  // const c = document.getElementById("canvas").getContext("2d");
+
+  // try this instead for a scaled canvas
+  const c = scaleCanvas(document.getElementById('canvas'));
 
   // set our drawing style
   c.lineWidth = 3;
@@ -41,32 +44,26 @@
   c.lineJoin = "round";
   c.strokeStyle = "#000";
 
-  // this counts how much we have walked already
-  let distanceWalked = 0;
-
-  // the stick figure's current position on the canvas
-  let positionX = 100;
-  let positionY = 150;
-
-  // the coordinates where the user wants the stick figure to go
-  // initially it's where the stick figure is
-  let targetX = positionX;
-  let targetY = positionY;
-
-  // how many pixels the stick figure can walk per second
-  let speed = 50;
-
-  // this variable controls when we're walking
-  let walking = false;
+  const state = {
+    distanceWalked: 20,
+    x: 100,
+    y: 150,
+    target: {
+      x: 100,
+      y: 150,
+    },
+    speed: 50,
+    walking: false,
+  }
 
   // draw the scene
   updateAndDrawCurrentState();
 
   // when the user sets a new target, we can start walking
   function startWalking() {
-    if (walking) return; // already walking, no need to do anything
+    if (state.walking) return; // already walking, no need to do anything
 
-    walking = true;
+    state.walking = true;
 
     // reset timer - ignore the time that has passed since last something happened
     elapsedTime();
@@ -76,7 +73,7 @@
 
   // this function can be called to stop the animation (when the stick figure has reached the target)
   function stopWalking() {
-    walking = false;
+    state.walking = false;
   }
 
   function updateAndDrawCurrentState() {
@@ -84,45 +81,44 @@
     c.clearRect(0,0,c.canvas.width,c.canvas.height);
 
     // draw target
-    line(c, targetX-10, targetY, targetX+10, targetY);
-    line(c, targetX, targetY-10, targetX, targetY+10);
+    line(c, state.target.x-10, state.target.y, state.target.x+10, state.target.y);
+    line(c, state.target.x, state.target.y-10, state.target.x, state.target.y+10);
 
     // compute distance of stick figure from the target
-    const distance = Math.sqrt(Math.pow(targetX-positionX, 2) + Math.pow(targetY-positionY, 2));
+    const distance = Math.sqrt(Math.pow(state.target.x-state.x, 2) + Math.pow(state.target.y-state.y, 2));
 
     if (distance<1) {
       // we are at target, no need to walk any further
-      drawStickFigure(c, positionX, positionY);
+      drawStickFigure(c, state.x, state.y);
       // reset the stride so the stick figure can rest with legs comfortably spread
-      distanceWalked = 0;
+      state.distanceWalked = 20;
       // when we're not moving, we need not wake up all the time and re-draw
       stopWalking();
       return;
     }
 
     // compute how far we have walked since the last time we've been in this function
-    let walkedNow = speed * elapsedTime();
+    let walkedNow = state.speed * elapsedTime();
 
     if (walkedNow > distance) walkedNow = distance; // don't walk past the target
 
     // compute the angle towards the target
     // note that direction here is in radians (full circle is 2π) and not in degrees as usual for us
-    let direction = Math.acos((targetX-positionX)/distance);
-    if ((targetY-positionY) < 0) direction = -direction;
+    const direction = Math.atan2(state.target.y-state.y, state.target.x-state.x);
 
     // take the next step
-    positionX = positionX + Math.cos(direction) * walkedNow;
-    positionY = positionY + Math.sin(direction) * walkedNow;
+    state.x = state.x + Math.cos(direction) * walkedNow;
+    state.y = state.y + Math.sin(direction) * walkedNow;
 
     // update the distance walked so the stride matches
-    distanceWalked += walkedNow;
+    state.distanceWalked += walkedNow;
 
     // this is our walking stick figure
     // notice the conversion of the direction to degrees
-    drawStickFigure(c, positionX, positionY, deg(direction), distanceWalked);
+    drawStickFigure(c, state.x, state.y, deg(direction), state.distanceWalked);
 
     // for smooth animation, tell the browser to call our redraw function the next time it wants a new image frame
-    if (walking) requestAnimationFrame(updateAndDrawCurrentState);
+    if (state.walking) requestAnimationFrame(updateAndDrawCurrentState);
   }
 
 
@@ -130,13 +126,13 @@
   function setNewTarget(event) {
     const click = getClickCoordinates(event, canvas);
     // 2 is the width of the border we've given our canvas
-    targetX = click.left-2;
-    targetY = click.top-2;
+    state.target.x = click.left-2;
+    state.target.y = click.top-2;
     startWalking();
   }
 
   function setSpeed(val) {
-    speed = val;
+    state.speed = val;
   }
 
 </script>
