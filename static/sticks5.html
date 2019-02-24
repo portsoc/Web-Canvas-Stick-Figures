@@ -104,8 +104,8 @@
     const direction = Math.atan2(state.target.y-state.y, state.target.x-state.x);
 
     // take the next step
-    state.x = state.x + Math.cos(direction) * walkedNow;
-    state.y = state.y + Math.sin(direction) * walkedNow;
+    state.x += Math.cos(direction) * walkedNow;
+    state.y += Math.sin(direction) * walkedNow;
 
     // update the distance walked so the stride matches
     state.distanceWalked += walkedNow;

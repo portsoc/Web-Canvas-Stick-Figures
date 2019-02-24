@@ -43,30 +43,23 @@
   c.lineJoin = "round";
   c.strokeStyle = "#000";
 
-  // this counts how much we have walked already
-  let distanceWalked = 0;
-
-  // the stick figure's current position on the canvas
-  let positionX = 100;
-  let positionY = 150;
-
-  // the coordinates of targets clicked by the user
-  const targets = [];
-
-  // how many pixels the stick figure can walk per second
-  let speed = 50;
-
-  // this variable controls when we're walking
-  let walking = false;
+  const state = {
+    distanceWalked: 20,
+    x: 100,
+    y: 150,
+    targets: [],
+    speed: 50,
+    walking: false,
+  }
 
   // draw the scene
   updateAndDrawCurrentState();
 
   // when the user sets a new target, we can start walking
   function startWalking() {
-    if (walking) return; // already walking, no need to do anything
+    if (state.walking) return; // already walking, no need to do anything
 
-    walking = true;
+    state.walking = true;
 
     // reset timer - ignore the time that has passed since last something happened
     elapsedTime();
@@ -76,7 +69,7 @@
 
   // this function can be called to stop the animation (when the stick figure has reached the last target)
   function stopWalking() {
-    walking = false;
+    state.walking = false;
   }
 
   function updateAndDrawCurrentState() {
@@ -84,54 +77,50 @@
     c.clearRect(0,0,c.canvas.width,c.canvas.height);
 
     // draw targets
-    targets.forEach(function (target) {
+    for (const target of state.targets) {
       line(c, target.x-10, target.y, target.x+10, target.y);
       line(c, target.x, target.y-10, target.x, target.y+10);
-    });
+    }
 
     // get the nearest target to walk towards
-    const target = selectNearestTarget(positionX, positionY);
+    const target = selectNearestTarget();
 
     if (target === null) {
       // there are no more targets, no need to walk any further
-      drawStickFigure(c, positionX, positionY);
+      drawStickFigure(c, state.x, state.y);
       // reset the stride so the stick figure can rest with legs comfortably spread
-      distanceWalked = 0;
+      state.distanceWalked = 20;
       // when we're not moving, we need not wake up all the time and re-draw
       stopWalking();
       return;
     }
 
     // compute how far we have walked since the last time we've been in this function
-    let walkedNow = speed * elapsedTime();
+    let walkedNow = state.speed * elapsedTime();
 
     if (walkedNow > target.distance) {
       walkedNow = target.distance; // don't walk past the target
-      // remove the first element in the array (selectNearestTarget puts the nearest target there)
-      targets.shift();
+      // remove the last element in the array (selectNearestTarget puts the nearest target there)
+      state.targets.pop();
     }
 
     // compute the angle towards the target
     // note that direction here is in radians (full circle is 2π) and not in degrees as usual for us
-    let direction = 0;
-    if (target.distance > 0.01) { // only face towards the target when we're some distance away from it
-      direction = Math.acos((target.x-positionX)/target.distance);
-      if ((target.y-positionY) < 0) direction = -direction;
-    }
+    const direction = Math.atan2(target.y-state.y, target.x-state.x);
 
     // take the next step
-    positionX = positionX + Math.cos(direction)*walkedNow;
-    positionY = positionY + Math.sin(direction)*walkedNow;
+    state.x += Math.cos(direction)*walkedNow;
+    state.y += Math.sin(direction)*walkedNow;
 
     // update the distance walked so the stride matches
-    distanceWalked += walkedNow;
+    state.distanceWalked += walkedNow;
 
     // this is our walking stick figure
     // notice the conversion of the direction to degrees
-    drawStickFigure(c, positionX, positionY, deg(direction), distanceWalked);
+    drawStickFigure(c, state.x, state.y, deg(direction), state.distanceWalked);
 
     // for smooth animation, tell the browser to call our redraw function next time it wants a new image frame
-    if (walking) requestAnimationFrame(updateAndDrawCurrentState);
+    if (state.walking) requestAnimationFrame(updateAndDrawCurrentState);
   }
 
 
@@ -139,7 +128,7 @@
   function addTarget(event) {
     const click = getClickCoordinates(event, canvas);
     // 2 is the width of the border we've given our canvas
-    targets.push({
+    state.targets.push({
       x: click.left-2,
       y: click.top-2,
     });
@@ -148,7 +137,7 @@
 
   function addTargets() {
     for (let i=0; i<100; i++) {
-      targets.push({
+      state.targets.push({
         x: Math.random()*canvas.width,
         y: Math.random()*canvas.height,
       });
@@ -157,14 +146,13 @@
   }
 
   // this function computes the current distance of all the targets and finds the nearest one
-  // after this function finishes, the nearest target is target[0]
-  function selectNearestTarget(x, y) {
+  function selectNearestTarget() {
     let nearestTarget = null;
     let nearestDistance = Infinity;
     let nearestIndex = null;
 
-    targets.forEach(function (target, idx) {
-      target.distance = Math.sqrt(Math.pow(target.x-x, 2) + Math.pow(target.y-y, 2));
+    state.targets.forEach((target, idx) => {
+      target.distance = Math.sqrt(Math.pow(target.x-state.x, 2) + Math.pow(target.y-state.y, 2));
       if (target.distance < nearestDistance) {
         nearestDistance = target.distance;
         nearestTarget = target;
@@ -173,17 +161,18 @@
     });
 
     if (nearestTarget) {
-      // put the nearestTarget as the first one in the list of targets so it's easy to remove
-      const tmp = targets[0];
-      targets[0] = targets[nearestIndex];
-      targets[nearestIndex] = tmp;
+      // put the nearestTarget at the end of the list of targets so it's easy to remove
+      const N = state.targets.length - 1;
+      const tmp = state.targets[N];
+      state.targets[N] = state.targets[nearestIndex];
+      state.targets[nearestIndex] = tmp;
     }
 
     return nearestTarget;
   }
 
   function setSpeed(val) {
-    speed = val;
+    state.speed = val;
   }
 
 </script>
