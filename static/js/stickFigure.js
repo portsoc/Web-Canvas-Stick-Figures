@@ -7,62 +7,58 @@
 
 // draws a stick figure on the canvas
 // the stick figure will stand over the point X,Y
-// facing is a degree in which the stick figure is facing: 0 is to the right, 90 is towards us
+// facing is a degree in which the stick figure is facing: 0 is to the right, 90 is towards us (default)
 // distance is the distance walked; a new step starts every 40 pixels
-function drawStickFigure(c, x, y, facing, distance) {
+function drawStickFigure(c, x, y, facing = 90, distance = 20) {
   // because of the way the canvas works, it's best to draw lines at half-pixels
   x+=0.5;
   y+=0.5;
 
-  // body is just a line
-  line(c, x, y-40, x, y-80); // body
+  drawBody(c, x, y);
 
-  // the arms and the legs look the same
-  drawLimbs(c, x, y, distance); // legs
-  drawLimbs(c, x, y-40, distance); // arms
+  drawLegs(c, x, y, distance);
 
-  // head is a circle with eyes and a smile
+  // the arms look just like the legs, just higher on the body
+  drawLegs(c, x, y-40, distance);
+
   // face drawn last so the body doesn't draw over it
-  circle(c, x, y-100, 20); // head
-  drawFace(c, x, y-100, facing); // face
+  drawHead(c, x, y-100, facing);
 
-  // draws the limbs; with the `distance` parameter, the limbs are drawn as an in-motion snapshot
-  function drawLimbs(c, x, y, distance) { // eslint-disable-line no-shadow
-    // at rest, the legs are spread by 2*20 pixels
-    // (the front leg is 20 pixels in front, the back leg is 20 pixels behind)
-    let spread = 20;
+  // body is just a line
+  function drawBody(c, x, y) { // eslint-disable-line no-shadow
+    line(c, x, y-40, x, y-80);
+  }
 
-    // if we have a distance parameter, we are moving (otherwise we are at rest)
-    if (distance !== undefined) {
-      // this is how we do walking: (we talk about legs, but arms behave the same)
-      // when walking, the stick figure starts at distance 0 with legs spread,
-      // then the front leg stays put on the ground
-      // every step is 40 pixels long
-      // after traveling 5 pixels, the front leg is only 15 pixels in the front;
-      // and the back leg is catching up, also by 5 pixels
-      // so after traveling 20 pixels, the front legs is right below you, and so is the back leg
-      // and after traveling 20 pixels more, the formerly front leg is now the back leg, and vice versa
-      // therefore, to spread the legs appropriately for the distance,
-      // we count 20 pixels minus our distance from the last full step
+  // draws the legs; with the `distance` parameter, the legs are drawn as an in-motion snapshot
+  function drawLegs(c, x, y, distance) { // eslint-disable-line no-shadow
+    // this is how we do walking: (we talk about legs, but arms behave the same)
+    // when walking, the stick figure starts at distance 0 with legs together
+    // then the back leg stays put on the ground and front leg moves forward
+    // every step is 40 pixels long
+    // after the stick figure travels 5 pixels, the front leg is 5 pixels ahead
+    // and the back leg is 5 pixels behind the body, so there's a 10 pixel spread between the legs
+    // after traveling 20 pixels, the legs as spread as far as they can be
+    // then we put the front foot down, lift the back foot and the back leg starts moving forward
+    // and after traveling 20 pixels more, the body is over the front leg and the back leg has caught up
 
-      // since we walk backwards the same as fowards, a negative distance is the same as positive,
-      // which makes the maths easier
-      if (distance < 0) distance = -distance;
+    // since we walk backwards the same as fowards, a negative distance is the same as positive,
+    // which makes the maths easier
+    if (distance < 0) distance = -distance;
 
-      // compute where in a step we are
-      const thisStep = distance % 40;
+    // compute where in a step we are (every step is the same)
+    const thisStep = distance % 40;
 
-      spread = 20-thisStep;
-    }
+    // the spread is 0 at the beginning and the end of a step, 20 in the middle
+    const spread = 20-Math.abs(thisStep-20);
 
     line(c, x-spread, y, x, y-40);
     line(c, x+spread, y, x, y-40);
   }
 
-  // this function is the same as before
-  function drawFace(c, x, y, facing) { // eslint-disable-line no-shadow
-    // if the `facing` parameter is not given, the stick figure will face towards us
-    if (facing === undefined) facing = 90;
+  // head is a circle with eyes and a smile
+  function drawHead(c, x, y, facing) { // eslint-disable-line no-shadow
+    // head
+    circle(c, x, y, 20);
 
     // make sure the `facing` parameter is between 0 and 360
     facing %= 360; // that's the mathematical remainder after a division
@@ -73,32 +69,33 @@ function drawStickFigure(c, x, y, facing, distance) {
     // we'll fake the turning of the face by shifting the eyes and the smile by an offset of up to 10 pixels
     const faceOffset = (facing-90)/9;
 
+    // eyes
     circle(c, x-7-faceOffset, y-5, 1); // 7 is distance from center, 5 is how high the eyes are from the head's center, 1 is eye size
     circle(c, x+7-faceOffset, y-5, 1);
 
-    // decrease the smile size here
+    // an arc for a smile
     const smileSize = 70; // size of smile in degrees of angle; 360 would be a full circle
-    let startAngle = rad(90-smileSize/2-2*faceOffset);
-    let endAngle = rad(90+smileSize/2-2*faceOffset);
+    let startAngle = rad(90-smileSize/2-2*faceOffset); // eslint-disable-line prefer-const
+    let endAngle = rad(90+smileSize/2-2*faceOffset); // eslint-disable-line prefer-const
     arc(c, x-faceOffset, y, 12, startAngle, endAngle); // 12 is the radius of the smile circle
 
-    // now a moustache
-    const moSize = 70; // size of smile in degrees of angle; 360 would be a full circle
-    startAngle = rad(90-moSize/2);
-    endAngle = rad(90+moSize/2);
-    arc(c, x-faceOffset-7, y-1, 8, startAngle-0.17, endAngle-0.17);
-    arc(c, x-faceOffset+7, y-1, 8, startAngle+0.17, endAngle+0.17);
+    // // now the moustache
+    // const moSize = 70; // size of smile in degrees of angle; 360 would be a full circle
+    // startAngle = rad(90-moSize/2);
+    // endAngle = rad(90+moSize/2);
+    // arc(c, x-faceOffset-7, y-1, 8, startAngle-0.17, endAngle-0.17);
+    // arc(c, x-faceOffset+7, y-1, 8, startAngle+0.17, endAngle+0.17);
 
-    // and a pointy beard
-    c.save(); // we're changing fillStyle so we need to be able to restore it
-    c.beginPath();
-    c.moveTo(x-faceOffset-6, y+15);
-    c.lineTo(x-faceOffset, y+30);
-    c.lineTo(x-faceOffset+6, y+15);
-    c.fillStyle='#fff';
-    c.fill();
-    c.stroke();
-    c.restore(); // restore previous fill style
+    // // and the pointy beard
+    // c.save(); // we're changing fillStyle so we need to be able to restore it
+    // c.beginPath();
+    // c.moveTo(x-faceOffset-6, y+15);
+    // c.lineTo(x-faceOffset, y+30);
+    // c.lineTo(x-faceOffset+6, y+15);
+    // c.fillStyle='#fff';
+    // c.fill();
+    // c.stroke();
+    // c.restore(); // restore previous fill style
   }
 }
 

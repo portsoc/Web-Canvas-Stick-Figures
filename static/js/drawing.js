@@ -38,6 +38,20 @@ function fillEll(c, x, y, rx, ry) {
 }
 
 
+// draw grass, useful to see how front foot of walking stick figure stays put
+function grass(c, y) {
+  c.save(); // we're changing the colour so need to be able to restore it below
+  c.strokeStyle = '#080';
+  const w = c.canvas.width;
+  for (let x=0; x<=w; x+=7) {
+    // the sine wave will give us a nice wavy grass
+    const h = 12 - 3*Math.sin(x/40);
+    line(c, x, y, x+h/5, y-h);
+  }
+  c.restore();
+}
+
+
 // convert from degrees to radians
 function rad(x) {
   return x * Math.PI / 180;
@@ -91,6 +105,7 @@ window.line = line;
 window.circle = circle;
 window.arc = arc;
 window.fillEll = fillEll;
+window.grass = grass;
 window.rad = rad;
 window.deg = deg;
 window.scaleCanvas = scaleCanvas;

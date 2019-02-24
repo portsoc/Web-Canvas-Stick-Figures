@@ -31,7 +31,10 @@
   'use strict';
 
   // get the "drawing context" - the object that can actually draw on the canvas
-  const c = document.getElementById("canvas").getContext("2d");
+  // const c = document.getElementById("canvas").getContext("2d");
+
+  // try this instead for a scaled canvas
+  const c = scaleCanvas(document.getElementById('canvas'));
 
   // set our drawing style
   c.lineWidth = 3;
@@ -70,7 +73,10 @@
 
   function drawEverything(c) {
     // clear the canvas - we'll redraw everything
-    c.clearRect(0,0,800,600);
+    c.clearRect(0,0,800,400);
+
+    // grass helps us see how the legs move
+    grass(c, 360);
 
     // this is our walking stick figure
     drawStickFigure(c, position, 350, (1-direction)*90, distanceWalked);
