@@ -10,10 +10,6 @@
 // facing is a degree in which the stick figure is facing: 0 is to the right, 90 is towards us (default)
 // distance is the distance walked; a new step starts every 40 pixels
 function drawStickFigure(c, x, y, facing = 90, distance = 20) {
-  // because of the way the canvas works, it's best to draw lines at half-pixels
-  x+=0.5;
-  y+=0.5;
-
   drawBody(c, x, y);
 
   drawLegs(c, x, y, distance);
