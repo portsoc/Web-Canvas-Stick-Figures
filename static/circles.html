@@ -1,0 +1,60 @@
+<!doctype html>
+<title>Drawing on Canvas</title>
+<style>
+  /* the canvas is normally invisible so we give it a border */
+  canvas {
+    border: 2px dashed green;
+    display: block;
+    margin: 1em;
+  }
+</style>
+
+<!--
+     in this file, we have an HTML5 canvas,
+     on which we draw just a bit
+  -->
+
+<h1>Drawing on Canvas</h1>
+
+<nav>
+  <a href="/">index</a>
+</nav>
+
+<canvas id="canvas" width="800" height="500">
+</canvas>
+
+<script>
+  const canvasEl = document.querySelector("#canvas");
+  const c = canvasEl.getContext("2d");
+  const w = canvasEl.width;
+  const h = canvasEl.height;
+
+  function circles(cx, cy, r, step) {
+    for (let i=step; i<=r; i+=step) {
+      c.beginPath();
+      c.ellipse(cx, cy, i, i, 0, 0, 7);
+      c.stroke();
+    }
+  }
+
+  circles(w/2, h/2, h/2, 10);
+  // circles(w/2+35, h/2, h/2, 10);
+
+  // let lastTime = 0;
+  // const speed = 4; // pixels per second
+  // const rstep = 15;
+  // const dist = 100;
+  //
+  // function drawNext(now) {
+  //   c.clearRect(0, 0, w, h);
+  //
+  //   const elapsed = (now-lastTime)/1000;
+  //   const x = (dist/2 - Math.abs(((elapsed*speed) % dist - dist/2)));
+  //   circles(w/2+x, h/2, h/2, rstep);
+  //   circles(w/2-x, h/2, h/2, rstep);
+  //   requestAnimationFrame(drawNext);
+  // }
+  //
+  // requestAnimationFrame(drawNext);
+
+</script>
