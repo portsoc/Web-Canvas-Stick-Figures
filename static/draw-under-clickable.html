@@ -4,11 +4,11 @@
 
 <style>
   canvas { position: fixed; top: 0; left: 0; z-index: -1; }
-  span.c { display: inline-block; font-weight: bold;/* prevent wrapping */ }
+  span.c { display: inline-block; font-weight: bold; /* prevent wrapping */ }
   p { min-width: 30em; }
 
 canvas, article {
-  transition: transform 2s ease-in-out;
+  transition: 2s ease-in-out;
 }
 
 .perspective canvas {
@@ -16,7 +16,8 @@ canvas, article {
     perspective(1500px)
     translateX(-100px)
     rotateY(45deg)
-    scale(.7);
+    scale(.8);
+  background-color: #ccc;
 }
 
 .perspective article {
@@ -43,7 +44,7 @@ canvas, article {
 <article>
 <p>This example uses a canvas under the page on which we can draw word highlights. Every word has been wrapped in a span.  Every span can be clicked, and then that happens the element classlist is toggled, and the underlying canvas redrawn.
 
-<p>Press P to see a perspective view, that highlights the separation.</p>
+<p>Press P to see a perspective view that highlights the separation.</p>
 
 <p>The rest is lorem ipsum, so it can be ingored.</p>
 
@@ -60,13 +61,15 @@ canvas, article {
   window.addEventListener('scroll', draw); // if we move the page we need to redraw because the canvas doesn't move
   window.addEventListener('resize', draw); // if we resize the page, it may reflow so we must redraw
 
+  const canvasEl = document.querySelector('#hili');
+
   function draw() {
     // set the canvas size to the window size (this also clears it)
-    window.hili.width = window.innerWidth;
-    window.hili.height = window.innerHeight;
+    canvasEl.width = window.innerWidth;
+    canvasEl.height = window.innerHeight;
 
     // get the context
-    const c = window.hili.getContext("2d");
+    const c = canvasEl.getContext("2d");
 
     // set the drawing style
     c.lineWidth = 4;
@@ -74,10 +77,12 @@ canvas, article {
     c.fillStyle = "#ff0";
     c.lineCap = "round";
 
+    // drawStickFigure(c, 100, 200, 45);
+
     let lastCX, lastCY;
 
     const words = document.querySelectorAll('span.c');
-    for (let el of words) {
+    for (const el of words) {
 
       // find dimentions of the element
       const elTop = offY(el) - window.scrollY;
@@ -122,11 +127,10 @@ canvas, article {
   });
 
   /**
-   * A reducer function to add a span around text and
-   * append that to a string that's being built
+   * A function to add a span around text
    */
-  function addSpan(curr, txt) {
-    return curr + "<span>"+txt+"</span> ";
+  function addSpan(txt) {
+    return `<span>${txt}</span>`;
   }
 
   /**
@@ -134,7 +138,7 @@ canvas, article {
    * every word in a span.
    */
   function markup(txt) {
-    return txt.split(" ").reduce(addSpan, "");
+    return txt.split(' ').map(addSpan).join(' ');
   }
 
   /**
@@ -145,9 +149,8 @@ canvas, article {
    * joined.
    */
 function prep() {
-  // find every 
   const art = document.querySelector('article');
-  for (const node of art.childNodes ) {
+  for (const node of art.childNodes) {
     console.log(node.textContent);
     console.log(markup(node.textContent));
     node.innerHTML = markup(node.textContent);

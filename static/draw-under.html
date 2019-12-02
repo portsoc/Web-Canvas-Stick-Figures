@@ -37,13 +37,15 @@
   window.addEventListener('scroll', draw); // if we move the page we need to redraw because the canvas doesn't move
   window.addEventListener('resize', draw); // if we resize the page, it may reflow so we must redraw
 
+  const canvasEl = document.querySelector('#hili');
+
   function draw() {
     // set the canvas size to the window size (this also clears it)
-    window.hili.width = window.innerWidth;
-    window.hili.height = window.innerHeight;
+    canvasEl.width = window.innerWidth;
+    canvasEl.height = window.innerHeight;
 
     // get the context
-    const c = window.hili.getContext("2d");
+    const c = canvasEl.getContext("2d");
 
     // set the drawing style
     c.lineWidth = 4;
@@ -56,7 +58,7 @@
     let lastCX, lastCY;
 
     const words = document.querySelectorAll('span.c');
-    for (let el of words) {
+    for (const el of words) {
 
       // find dimentions of the element
       const elTop = offY(el) - window.scrollY;

@@ -8,9 +8,11 @@ multi-player stick figure diamond hunt game.
 
 Most of the files are static files happily working off of a local drive or any server.
 
-The multiplayer game needs a server; it's a typical Node.js server, so `npm install` and `npm start` should help there.
+The multiplayer game needs a server; it's a typical Node.js/Express.js server, so do:
+* `npm install`
+* `npm start`
 
-`admin.html` gives you links to reset the scores, start and stop generating diamonds.  `config.js` can be set up to only allow these links to work from a certain _referer_, as a simple authentication mechanism.
+`admin.html` gives you links to reset the scores, start and stop generating diamonds.  `config.js` can be set up to only allow these links to work from a certain _referer_, as a simple authentication mechanism (e.g. use a hidden Moodle page).
 
 ### Notes and TODOs:
 
