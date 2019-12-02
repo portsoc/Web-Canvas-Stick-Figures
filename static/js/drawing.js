@@ -53,13 +53,13 @@ function grass(c, y) {
 
 
 // convert from degrees to radians
-function rad(x) {
-  return x * Math.PI / 180;
+function rad(degrees) {
+  return degrees * Math.PI / 180;
 }
 
 // convert from radians to degrees
-function deg(x) {
-  return x / Math.PI * 180;
+function deg(radians) {
+  return radians / Math.PI * 180;
 }
 
 
