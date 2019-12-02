@@ -29,11 +29,11 @@
   'use strict';
 
   // add a click event handler on the canvas so we can tell the stick figure where to go
-  const canvas = document.getElementById("canvas");
+  const canvas = document.querySelector("#canvas");
   canvas.addEventListener('click', setNewTarget);
 
   // get the "drawing context" - the object that can actually draw on the canvas
-  const c = document.getElementById("canvas").getContext("2d");
+  const c = canvas.getContext("2d");
 
   // set our drawing style
   c.lineWidth = 2;

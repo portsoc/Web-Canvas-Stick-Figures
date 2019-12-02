@@ -44,7 +44,7 @@
   'use strict';
 
   // add a click event handler on the canvas so we can tell the stick figure where to go
-  const canvas = document.getElementById("canvas");
+  const canvas = document.querySelector("#canvas");
   canvas.addEventListener('click', setTarget);
 
   // get the "drawing context" - the object that can actually draw on the canvas
@@ -149,7 +149,7 @@
   // this will increase the score and update it in the page
   function incrementScore() {
     state.score++;
-    document.getElementById("score").textContent = state.score;
+    document.querySelector("#score").textContent = state.score;
   }
 
   // when the user clicks, we put a target where the user clicked, and start walking
