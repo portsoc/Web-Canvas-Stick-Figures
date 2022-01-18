@@ -8,12 +8,12 @@
     "express": "^4.16.4"
   },
   "devDependencies": {
-    "eslint": "^5.14.1",
-    "eslint-config-airbnb": "^17.1.0",
+    "eslint": "^8.7.0",
+    "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.12.4",
-    "nodemon": "^1.18.4"
+    "nodemon": "^2.0.15"
   },
   "scripts": {
     "start": "node server"
