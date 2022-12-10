@@ -5,7 +5,7 @@
   "private": true,
   "dependencies": {
     "body-parser": "^1.18.3",
-    "express": "^4.16.4"
+    "express": "^4.17.3"
   },
   "devDependencies": {
     "eslint": "^8.7.0",
